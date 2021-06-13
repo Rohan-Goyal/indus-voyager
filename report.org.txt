@@ -314,6 +314,18 @@ These diverged significantly from the results of my script (which I've included 
 'Neptune: 22.613330589378773 km / s'
 #+end_src
 ** Correction Maneuvers from Ephemeris and Mission Reports
+Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in poliastro based on orbit determination papers, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
+Since some of the data was lacking, I cross-referenced it with voyager ephemeris data from the JPL horizons system, which recorded the velocity vectors at different points in time. I wrote a python script to parse these ephemeris files, which could calculate the delta-V between various points in time and identify patterns which matched maneuvers (such as a short period of time with delta-V higher than average, or an impulsive maneuver which caused a large near-instantaneous change in velocity).
+By selecting certain ranges of ephemeris files, I was able to find the delta-V of most of Voyager's TCMs.
+
+In order to implement these in my simulation, I created a hashtable of maneuvers, each associated with a name (the hashtable key), an epoch, and an impulse (both of which were stored in a tuple).
+I also redefined the ~assist_to_planet~ function, to automatically fire these maneuvers at the appropriate epoch. I defined a routine to search through that hashtable to find maneuvers associated with dates within a certain time range, and to interrupt the orbit propagation to fire those burns.
+#+begin_src python
+  # TODO
+#+end_src
+# TODO: Add ICRF papers to bib
+
+
 * Problems/Errors
 ** Calculating Delta-V
 - Poliastro does not separate delta-V due to maneuvers from delta-V caused by flybys.
@@ -324,6 +336,7 @@ These diverged significantly from the results of my script (which I've included 
 - Error scale/significance: Not very
 - Solution: Define correction maneuvers
 ** Timeline Mismatch
+- Really embarassing, honestly. Consider just not mentioning it.
 ** Initial Orbit
 * COMMENT Gravity Assists, Voyager, Practice
 ** Grav assists

@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-poliastro = "0.14"
+poliastro = {path="/Users/rohangoyal/Downloads/poliastro-0.14.0/dist/poliastro-0.14.0-py3-none-any.whl"}
 jupyter = "*"
 ipykernel = "*"
 

@@ -312,7 +312,7 @@ Break up assist to planet to include a delta-V fired at a given date. So basical
 Define the assist function to include a list of maneuvers as params.
 So for i in maneuver_List, prop to i.epoch, apply_maneuver i.impulse. Then, finally, lambert to the target.
 
-TODO: Set up git and pyenv
+DONE: Set up git and pyenv
 
 So basically, define flyby, target.
 Successively propagate and update flyby,target.
