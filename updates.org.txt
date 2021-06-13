@@ -1,0 +1,46 @@
+* <2021-05-10 Mon>
+Hi Sharon,
+
+I did some research on gravity assist maneuvers, and specifically on how the choice of orbital parameters like periapsis altitude affect the `exit velocity' when it leaves the planets SOI and the deflection angle. I also looked into the Oberth effect, and how initiating correction burns at the point of max velocity nets the rocket extra kinetic energy.
+
+For the planetary alignment aspect of it, I looked at the Voyager 2 probe's trajectory and timelines, such as how long it takes to travel between various planets.
+
+I've listed the sources I used below:
+*** Gravity Assists
+- https://www.diva-portal.org/smash/get/diva2:1440099/FULLTEXT01.pdf
+- https://physics.stackexchange.com/questions/154854/maths-behind-gravity-assist?newreg=95f895fb452e4db8b42198bba53447d3
+- http://www.ams.org/publicoutreach/feature-column/fcarc-slingshot
+
+*** Oberth Effect
+- https://aapt.scitation.org/doi/pdf/10.1119/1.5126818
+- https://arxiv.org/pdf/2010.14997.pdf
+
+*** Voyager 2
+- https://voyager.jpl.nasa.gov/mission/timeline/
+- https://astronomy.com/news/2019/07/nasa-shuts-off-systems-on-voyager-2-saving-power-for-long-haul-into-interstellar-space
+* <2021-05-11 Tue>
+
+I did some further reading on factors the that affect gravity assists, and some of the basic math behind them. As far as I can tell, the main things that affect the trajectory of a gravity assist (i.e the change in velocity it generates) are the velocity at entry and the altitude of periapsis.
+
+https://ai-solutions.com/_freeflyeruniversityguide/gravity_assist.htm
+https://arxiv.org/pdf/1105.1822.pdf
+
+
+I also found some Python libraries for simulating orbits and specifically gravity assists. I'm looking through their documentation to see how they work, and to see which one works better. So far I've found two promising libraries - PyKep and Poliastro. Poliastro seems quite usable and it has explicit examples of simulating gravity assists based on the launch epoch, so for now I'm working with that and setting up some basic simulations.
+
+Poliastro: https://docs.poliastro.space/en/stable/jupyter.html
+Pykep: https://esa.github.io/pykep/examples/ex1.html
+* <2021-05-13 Thu>
+Hi Sharon,
+
+I wrote a simple script which plots the planets at their positions at different dates. For now, I've assumed that the timescales for the mission are similar to the timescales for voyager 2 - so ~2 years to reach Jupiter, for instance.
+It assumes (very approximately) that the spacecraft flies by Jupiter at launch+2, Saturn at launch+4, Uranus at launch+9.5, Neptune at launch+13.
+
+The plot I've attached shows the planets as they would be when we expect to arrive at them, assuming we launch around 2024. I experimented with different launch dates over 2024-2025, and they all produced roughly similar plots. Based on this, it seems a mission could visit Jupiter, Uranus, and Neptune, but not Saturn.
+
+I also worked with poliastro's orbit-modelling facilities. I've written a script which recreates the Jupiter and Saturn flybys from the voyager 2 mission, and calculates the maneuvers required (duration, delta-V vector, etc.). I've attached the script, and the plot it produced, below.
+
+It had some issues with keeping to the timelines of the voyager mission (trying those ended with the program throwing some errors), so I've modified the timelines for the moment. I'm trying to figure out why that's happening, and how to fix that problem.
+
+Sincerely,
+Rohan

@@ -1,0 +1,347 @@
+* Introduction
+# TODO
+* Research
+** Lambert
+*** Problem
+Lambert's Problem refers to the problem of determining a transfer orbit between two given position vectors (points in space) and a travel time between them. \cite{lambert_simple}
+Lambert's Theorem states that the travel time along a Keplerian orbit between two points r_1 and r_2 is a function of \cite{lambert_izzo}:
+- The distance between r_1 and r_2, $c$
+- The sum of distances of r_1 and r_2 from the central body, $r_1+r_2$
+- The semi-major axis of the orbit, $a$
+
+No analytical solutions are known, but the problem can be solved via numerical approximations.
+
+*** Solutions
+The actual mathematics behind these is frankly a nightmare, but the concepts and intuition behind these solutions are interesting and worth explaining.
+
+One common solution, as presented in \cite{lambert_simple} begins by defining the `fundamental ellipse', i.e the least-eccentric orbit which intersects points $r_1$ and $r_2$
+Parameters of other solutions (i.e. other possible orbits), such as their eccentricity vector and argument of periapsis, can be defined in terms of their relation to this `fundamental ellipse'. For instance, the eccentricity vector $e$ can be represented as $e_F$ (i.e. $e$ of the fundamental ellipse) plus a transverse component $e_T$. Then, by iteratively varying $e_T$, we can approach an orbit which travels between $r_1$ and $r_2$ in the specified travel time.
+
+One other solution, outlined in \cite{lambert_izzo}, involves defining a parameter $\lambda$, such that $s \lambda = \sqrt{r_1r_2}cos(\frac{\theta}{2})$, where s is the semiperimeter of the orbit. By defining new quantities $x$ and $y$, we can define an equation for the time period of an orbit in terms of these parameters, and use this as the basis for a differential equation to solve numerically.
+This solution is the most popular to implement, and Poliastro (the python library I use) relies on a version of it.
+
+** Gravity Assist
+A Gravity Assist or `slingshot' maneuver involves using the gravitational field of a planet to effect a change in direction, i.e to supply delta-V. This can be used to achieve certain trajectories more cheaply.
+
+Mathematically, we can model a gravity assist as a hyperbolic orbit, where we use asymptotes to an ellipse to represent trajectory vectors. \cite{assists_vassile}
+
+A craft enters the planet's Sphere of Influence along an asymptotic arrival vector, and leaves along a `departure asymptote', with its orbit becoming a hyperbolic trajectory.
+
+We know $V^2 = \mu (\frac{2}{r} - \frac{1}{a})$, from the conservation equation.
+We can deduce the `hyperbolic excess velocity' of the body, i.e. the velocity of the body /relative to the planet/ as it exits the orbit, by having r \rightarrow \infinity.
+This yields $V_{\infinity}=\sqrt{-\frac{\mu}{a}}$
+
+The exit velocity (relative to the Sun) of the spacecraft is thus $V_2=V_{\infinity}+V_p$, where V_p represents the velocity of the planet relative to the Sun.
+
+If the angle of deflection between the entry and exit velocity vectors is $\psi$, then the delta-V of the spacecraft (including changes in direction) is \cite{assists_santos}:
+
+$$\Delta V = 2 V_{\infinity} sin(\frac{\psi}{2})$$
+
+We can see that in order to maximise the change in velocity of the flyby, we should maximise the angle of deflection $\psi$, and minimise the flyby radius $r_p$.
+
+#+DOWNLOADED: file:///home/rohan/d/indus-2/grav%20assist.png @ 2021-06-07 23:34:02
+[[file:Research/2021-06-07_23-34-02_grav assist.png]]
+TODO: Explain image, cite
+
+** Patched Conic Approximation
+The Patched Conic Approximation is a method for getting approximate solutions to gravity assist maneuvers and other three-body problems. It divides the problem into three separate two-body problems - the initial planetocentric orbit, a heliocentric transfer orbit, and another planetocentric orbit (around the target planet), and defines `patch conditions', such as conditions on its velocity as it leaves the SOI (Sphere of Influence) of the first planet. \cite{aoe_conics}
+
+Solving these problems usually involves defining 3 `patch points':
+
+1. Conditions on leaving the first planet's SOI
+2. Conditions arriving at the target planet
+3. Conditions on leaving the target planet.
+
+First, we define vector quantities
+- $V_c$: Velocity of planet w.r.t Sun
+- $V$: Heliocentric orbit velocity of the craft
+- $\Delta V$: Difference between $V_c$ and $V$
+- $\theta$: Angle between $V_c$ and $V$
+
+By the cosine rule:
+$$\Delta V_1^2 = V_{c_1}^2+V_1^2-2V_{c_1}V_1cos(\phi_1)$$
+$$\Delta V_1^2 = V_{c_2}^2+V_2^2-2V_{c_2}V_1cos(\phi_2)$$
+
+We can define some conditions on the body at the patch points.
+
+We know that $\Delta V = V_{\infinity}$, i.e. the velocity of the spacecraft relative to the planet is its excess hyperbolic velocity (which we already saw how to compute).
+
+The velocity of the spacecraft relative to the sun is equal to the sum of the heliocentric velocity of the planet and the velocity of the spacecraft relative to the planet. Mathematically, $V_1=V_{\infinity}+V_{c_1}$ \cite{ocw_17}
+
+# \beta , the `exit angle', is related TODO
+
+** Voyager 2
+Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
+Due to the gravity assists, Voyager 2 was able to maintain relatively high velocities, even while budgeting a total of about 190m/s of delta-V for maneuvers.
+
+#+DOWNLOADED: file:///home/rohan/d/indus-2/voyager_trajectories.jpg @ 2021-06-07 12:46:48
+[[file:Research/2021-06-07_12-46-48_voyager_trajectories.jpg]]
+
+
+We can see that the gravity assists provided most of the delta-V for Voyager 2 by looking at the graph of its velocity relative to distance from the sun - each planetary flyby led to a spike in Voyager's velocity \cite{velocity_dist}.
+
+#+DOWNLOADED: file:///home/rohan/d/indus-2/768px-Voyager_2_velocity_vs_distance_from_sun.svg.png @ 2021-06-07 15:35:21
+[[file:Research/2021-06-07_15-35-21_768px-Voyager_2_velocity_vs_distance_from_sun.svg.png]]
+(TODO: I plan to add a bit more on the design of voyager and its capabilities)
+*** COMMENT Science and Research
+- Atmospheric composition of planets and moons
+- Visual reconnaissance
+- Analysing planet magnetic fields
+*** Grand Tour
+Voyager 2 took advantage of a rare planetary alignment (which occurs every 175 years) to go on a `Grand Tour' of the solar system, and visit all four outer planets, while Voyager 1 only visited Jupiter and Saturn before exiting the solar system. The reliance on gravity assists allowed this trajectory to be feasible, given constraints on delta-V, thrust, etc.
+Voyager 2 provided the first flyby of Uranus and Neptune, and gathered exceptional data on things like the moons of Saturn and Jupiter.
+# TODO cites
+# Grand tour relied on gravity assists
+# Delta-V stats
+# Alignment
+** Correctional Maneuvers
+Trajectory Correction Maneuvers (TCMs) are performed before or after flybys, to correct for minor distortions caused by imperfect navigation, uncertainty in craft position/velocity, etc. Since these errors compound over time, periodic TCMs ensure the spacecraft stays on its intended trajectory. TCMs are usually on the order of magnitude of m/s, and most of the large maneuvers are in the form of unpowered gravity assists.
+
+Voyager's Trajectory Correction Maneuvers relied on four small thrusters, which were collectively able to exert about 0.5 pounds (2.224 Newtons) of thrust \cite{backgrounder1981}.
+
+Voyager's flybys of Uranus and Neptune were the first flybys of the planet, and so data on the gravitational parameter (and on other factors, such as mass/radius of moons) was solely based on observation from Earth. Inaccuracies in the estimation/modelling due to this caused Voyager to deviate from the target orbit, and were dealt with via TCMs. \cite{od_jupiter}
+Additionally, Voyager gained small amounts of delta-V due to orientation changes, such as to gather data or send out radiometric pulses. Similarly, voyagers roll thrusters (responsible for these changes in orientation) were slightly imbalanced, and so TCMs were used periodically to account for the effects of that \cite{od_uranus}
+
+Voyager 2 executed a total of 20 TCMs, or about 5 per flyby. Most of these TCMs happened shortly (on the order of a few months or less) before or after flybys.
+
+** Oberth Effect
+The Oberth effect is a phenomenon where a small impulse can create a large change in kinetic energy, if the initial velocity is high enough. In space travel, this means that if a burn is fired at (or centered around) periapsis, it can increase the kinetic energy, giving the craft additional hyperbolic velocity and allowing it to exit the planet's Sphere of Influence. Intuitively, this arises from the fact that firing a burn at periapsis results in both the chemical and mechanical energy of the fuel being converted to kinetic energy for the rocket. \cite{aapt_oberth}
+Mathematically,
+$$ \Delta K_r = \frac{1}{2}M(v+\Delta v)^2 - \frac{1}{2}M(\delta v)^2 $$
+$$ \Delta K_r = \frac{1}{2}M(\Delta v)^2 + Mv\Delta v $$
+And so we see the change in kinetic energy increases with the (initial) velocity of the spacecraft. Thus, the rocket gains more kinetic energy from the same impulse when it is already moving at a high velocity.
+
+When firing a burn, the exhaust has speed v_{ex}-v relative to the planet.
+he change in KE (of the expelled fuel) is $\frac{1}{2} m_{ex}(v_{ex}-v)^2-\frac{1}{2}m_{ex}v^2$
+
+We can imagine this as a rocket-powered skateboard travelling along a U-shaped valley. At the starting point, the rocket and fuel together have a total energy of -(M+m_{ex})gh_A , where h_A is the height of point A (since velocity is 0, all energy is in the form of GPE).
+
+If the rocket fires a burn at the trough B, while moving with velocity v_B, then:
+
+The energy of the rocket is $E_r = \frac{1}{2}M(v_B+\Delta v)^2 - Mgh_B = \frac{1}{2}M(\Delta v)^2 + Mv_B \Delta v + \frac{1}{2}Mv_B^2-Mgh_B$
+Thus, we see the rocket gains kinetic energy $\frac{1}{2}M(\Delta v)^2 + Mv_B \Delta v$ due to the burn.
+
+The energy of the exhaust is $E_{ex} = \frac{1}{2}m_{ex}(v_b-v_{ex})^2-m_{ex}gh_b = \frac{1}{2}m_{ex}v_{ex}^2 - m_{ex}v_B + \frac{1}{2}m_{ex}v_B^2 - m_{ex}gh_B$
+Thus, we see the exhaust /loses/ kinetic energy $\frac{1}{2}m_{ex}v_{ex}^2 + m_{ex}v_B$, meaning the total energy of the system remains constant.
+
+In the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
+
+* Practice
+** Experimentation
+In order to model this mission, I explored various python libraries.
+*** PyKep \cite{pykep}
+PyKep is a scientific library that allows us to model space exploration missions (such as multiple gravity assist maneuvers) as optimisation problems, and solve them using genetic algorithms and other optimisation techniques.
+However, PyKep has limited ability to define constraints and specifications (such as on the specific energy $C_3$ of the craft, and on how precisely we can define orbit timelines)
+*** Poliastro \cite{poliastro}
+Poliastro is a library for simulating and visualising orbital mechanics, sponsored by Google and the ESA.
+It provides facilities for plotting planets and other bodies over time, including propagating spacecraft orbits, as well as for automatically defining transfer orbits and maneuvers based on Lambert solvers.
+Ultimately, this was the one I settled on. It was the best-documented and easiest to work with, and also the only software under active development.
+** Understanding the Implementation
+In order to model the planned Voyager 3 mission, I used the python library Poliastro. It provides automated utilities for modelling and graphing orbits.
+Poliastro includes functions for automatically solving Lambert problems, and simulating gravity assists.
+*** Lambert
+Central to Poliastro is the algorithm for solving Lambert's Problem, based on the solution in \cite{lambert_izzo}. In this implementation, it also calculates the delta-V necessary to achieve the required transfer orbit, and the initial and final velocity vectors.
+
+*** Patched Conics
+Poliastro also uses patched conics computations to achieve higher accuracy in gravity assists and other multi-planet maneuvers \cite{poliastro_conics}.
+
+Poliastro uses patched conic methods to calculate the delta-V gained from unpowered flybys, depending on input parameters like the hyperbolic insertion velocity, the radius of the flyby orbit, etc.
+
+*** Automatic Gravity Assists
+\cite{poliastro_jupiter} demonstrates a sample poliastro mission which performs a gravity assist around Earth to reach Jupiter, without us needing to explicitly program parameters for the assist. The mission is based on the New Horizons Juno probe.
+** Plotting Planets
+For an intuitive overview of the Voyager 3 mission, I created a plot of the planets at various points. Based on the Voyager 2 mission timelines, I plotted the planets at the points they would be when Voyager 3 arrives at them.
+
+Poliastro provides facilities for plotting orbits of planetary bodies. I defined a function to plot planets at specific time offsets.
+
+I learned that a Voyager 3 mission would only be able to visit 3 planets - Jupiter, Uranus, and Neptune, rather than doing a full grand tour.
+*** Code Snippets
+#+begin_src python
+def plot_planet(planet, duration, start=launch, plotter=plotter):
+    plotter.plot_body_orbit(
+        planet, start + years(duration), label=f"{planet} at time of flyby"
+    )
+
+
+def plot_all(start=launch, plotter=plotter):
+    plot_planet(Earth, 0, start, plotter)
+    plot_planet(Jupiter, 2, start, plotter)
+    plot_planet(Saturn, 4, start, plotter)
+    plot_planet(Uranus, 9.5, start, plotter)
+    plot_planet(Neptune, 13, start, plotter)
+
+
+def multiple(start=launch, inc=3, it=8):
+    for i in range(0, it):
+        start += months(inc)
+        plot_all(start, StaticOrbitPlotter())
+#+end_src
+*** Output Plot
+#+DOWNLOADED: file:///home/rohan/d/indus-2/planet%20positions%202024%20launch.png @ 2021-06-07 12:46:00
+[[file:Practice/2021-06-07_12-46-00_planet positions 2024 launch.png]]
+** Plotting 1977 Mission
+In order to come up with a template for the 2024 mission, I decided to first model the 1977 mission. This way I'd be able to check my simulation against existing data.
+The program was based on the example given in \cite{poliastro_jupiter}
+*** Overview of Program
+The program defines a generic ~assist_to_planet()~ function, which does the following. Calling this function with different planets and parameters (such as target dates) lets us simulate a deep-space mission with multiple gravity assists.
+1. Generate ephemeris of the target planet around launch/arrival times
+2. Convert that ephemeris to a heliocentric orbit
+3. Have the program calculate a Lambert maneuver from the current orbit to the point of closes approach of the target planet (such that it arrives at that point at the correct epoch)
+4. Propagate that maneuver forward to the epoch of closest approach
+5. Compute and return the impulses and total delta-V cost (including delta-V from gravity assist) of that maneuver.
+6. Also return the resulting orbit around the planet that the body has transferred into.
+7. Plot that maneuver on a ~StaticOrbitPlotter~.
+*** ~Assist to planet~ function
+#+begin_src python
+def assist_to_planet(params):
+    planet_orbit = Ephem.from_body(planet, time_range(launch_date, end=next_date))
+    ss = Orbit.from_ephem(Sun, planet_orbit, target_date)
+    man = Maneuver.lambert(current_orbit, ss)
+    flyby, target = current_orbit.apply_maneuver(man, intermediate=True)
+    flyby_end = flyby.propagate(target_date + delta)
+    plotter.plot_body_orbit(planet, target_date, label=f"{planet} End of Flyby")
+    plotter.plot_trajectory(
+        flyby_end.sample(min_anomaly=anom[0] * u.deg, max_anomaly=anom[1] * u.deg),
+        label=f"To {planet}",
+        color=color,
+    )
+    return man.impulses, flyby_end, target, man.get_total_cost()
+#+end_src
+*** Initial Orbit
+I started by defining the C_3 (characteristic energy in $m^2/s^2$) of the voyager 2 craft, and also the initial orbit of voyager 2.
+The initial orbit was defined based on ephemeris data from the JPL Horizons database.
+#+begin_src python
+init_orbit = Orbit.from_classical(
+    Sun,
+    3.76054 * u.AU,
+    0.733305558 * u.one,
+    4.87003 * u.deg,
+    327.8026 * u.deg,
+    11.65107 * u.deg,
+    348.80709 * u.deg,
+)
+#+end_src
+*** Outputs
+The program is able to calculate and output the radius and velocity vectors of the simulated craft over time, as well as the total delta-V caused by maneuvers.
+**** Code to generate outputs:
+#+begin_src python
+def magnitude(obj):
+    return (norm(obj.rv()[0]).to(u.AU), norm(obj.rv()[1]))
+
+vectors = [
+    magnitude(init_orbit),
+    magnitude(jupiter_end),
+    magnitude(saturn_end),
+    magnitude(uranus_end),
+    magnitude(neptune_end),
+]
+
+pprint(vectors)
+print()
+pprint(f"Jupiter: {jupiter_cost}")
+pprint(f"Saturn: {saturn_cost}")
+pprint(f"Uranus: {uranus_cost}")
+pprint(f"Neptune: {neptune_cost}")
+#+end_src
+**** Distance from sun (magnitude, AU) and Velocity (magnitude, km/s) at various points:
+#+begin_src
+[(<Quantity 1.01105114 AU>, <Quantity 38.97381359 km / s>),
+ (<Quantity 5.32385823 AU>, <Quantity 12.77382399 km / s>),
+ (<Quantity 9.59257842 AU>, <Quantity 15.43820498 km / s>),
+ (<Quantity 19.11545267 AU>, <Quantity 17.8635083 km / s>),
+ (<Quantity 30.2129865 AU>, <Quantity 18.84014064 km / s>)]
+#+end_src
+**** $\Delta v$ from flybys (this includes the $\Delta v$ gained from gravity assists:
+#+begin_src
+'Jupiter: 19.224017095758576 km / s'
+'Saturn: 24.659315822167006 km / s'
+'Uranus: 29.304008812446888 km / s'
+'Neptune: 22.613330589378773 km / s'
+#+end_src
+*** Plot Produced
+#+DOWNLOADED: file:///home/rohan/d/indus-2/voyager%202.png @ 2021-06-07 12:44:01
+[[file:Practice/2021-06-07_12-44-01_voyager 2.png]]
+
+** Plotting 2024 Mission
+Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets
+*** Defining Initial Orbit
+Since there weren't any ephemeris files I could rely on, I used an alternative method to define the initial orbit.
+** Checking Against Voyager 2
+Due to some uncertainties I had about the results of my original simulation, I tried to verify them against known records for the voyager spacecraft.
+
+Poliastro also provides methods for querying ephemeris files (which record orbit information for missions such as voyager 2) and analysing them \cite{poliastro_ephem}. I wrote a script to query these ephemeris files for voyager 2, and retrieve the delta-V of the various burns and gravity assists.
+
+The script essentially samples the velocity vectors at evenly-spaced points in time, and compares them. The function vsub returns the delta-V between two intervals, both as a vector and as a scalar (the magnitude of the delta-V vector).
+
+My original simulation also outputs the delta-V caused by the various flybys I simulated. By comparing the data from my own simulation with this ephemeris data, I was able to spot and solve various errors.
+*** Jupiter
+#+begin_src
+In [49]: vsub(47,45)
+Out[49]:
+(<Quantity [-11.05536094,  -9.61441214,  -2.31458803] km / s>,
+ <Quantity 14.83291084 km / s>)
+#+end_src
+*** Saturn
+#+begin_src
+In [58]: vsub(100,98)
+Out[58]:
+(<Quantity [12.79594337, -7.24734966, -4.27395355] km / s>,
+ <Quantity 15.31427187 km / s>)
+#+end_src
+*** Uranus
+#+begin_src
+In [68]: vsub(210,208)
+Out[68]:
+(<Quantity [5.63390722, 0.77951089, 1.58976787] km / s>,
+ <Quantity 5.90558292 km / s>)
+#+end_src
+*** Neptune
+#+begin_src
+In [74]: vsub(299,297)
+Out[74]:
+(<Quantity [ -8.13444399,   7.73798519, -10.31194071] km / s>,
+ <Quantity 15.24407147 km / s>)
+#+end_src
+
+These diverged significantly from the results of my script (which I've included below)
+#+begin_src
+'Jupiter: 19.224017095758576 km / s'
+
+'Saturn: 24.659315822167006 km / s'
+
+'Uranus: 29.304008812446888 km / s'
+
+'Neptune: 22.613330589378773 km / s'
+#+end_src
+** Correction Maneuvers from Ephemeris and Mission Reports
+* Problems/Errors
+** Calculating Delta-V
+- Poliastro does not separate delta-V due to maneuvers from delta-V caused by flybys.
+-
+** Delta-V Mismatch
+- Although rv vectors matched ephemeris, delta-V due to gravity assists did not match existing data
+- Diagnosis: Both delta-V from ephemeris, and from the graph.
+- Error scale/significance: Not very
+- Solution: Define correction maneuvers
+** Timeline Mismatch
+** Initial Orbit
+* COMMENT Gravity Assists, Voyager, Practice
+** Grav assists
+** Voy
+** Practice:
+# - PyKep experiments
+- Timeline problems
+- Errors with parameters
+- Excess fuel cons/delta-V
+# Features - generic function for flyby, specifies c3 parameter and init orbit, outputs impulses (vectors and magnitudes), and velocities at points.
+TODO: Missing propagate commands after the flybys. Is that an issue? Doing the assist at the wrong moment? No idea.
+** Additional research
+- research on voy maneuvers and elta-v ({planet} orbit.pdf)
+- stone{date}.pdf
+- voyager backgrounder, mission description
+
+
+voyager 2, gravity assists and conics. In that order, roughly.
+* Bibliography
+\bibliographystyle{plain}
+\bibliography{full-bibliography}

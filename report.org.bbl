@@ -1,0 +1,95 @@
+\begin{thebibliography}{10}
+
+\bibitem{poliastro_ephem}
+Ephem module — poliastro 0.14.0 documentation.
+\newblock \url{https://docs.poliastro.space/en/v0.14.0/api/safe/ephem.html}.
+\newblock (Accessed on 06/07/2021).
+
+\bibitem{poliastro_jupiter}
+Going to jupiter with python using jupyter and poliastro — poliastro 0.15.0
+  documentation.
+\newblock
+  \url{https://docs.poliastro.space/en/stable/examples/Going%20to%20Jupiter%20with%20Python%20using%20Jupyter%20and%20poliastro.html}.
+\newblock (Accessed on 06/07/2021).
+
+\bibitem{poliastro_conics}
+Patched conics computations · poliastro/poliastro wiki.
+\newblock
+  \url{https://github.com/poliastro/poliastro/wiki/Patched-conics-computations}.
+\newblock (Accessed on 06/07/2021).
+
+\bibitem{lambert_simple}
+Giulio Avanzini.
+\newblock A simple lambert algorithm.
+\newblock {\em Journal of Guidance, Control, and Dynamics}, 31(6):1587--1594,
+  2008.
+
+\bibitem{aapt_oberth}
+Philip~Rodriguez Blanco and Carl~E. Mungan.
+\newblock Rocket propulsion, classical relativity, and the oberth effect.
+\newblock {\em The Physics Teacher}, 57(7):439--441, 2019.
+
+\bibitem{backgrounder1981}
+Frank Bristow.
+\newblock Voyager backgrounder.
+\newblock Technical report, NASA, 08 1981.
+
+\bibitem{od_jupiter}
+J.~Campbell, S.~Synnott, and G.~Bierman.
+\newblock Voyager orbit determination at jupiter.
+\newblock {\em IEEE Transactions on Automatic Control}, 28:256--268, 1983.
+
+\bibitem{velocity_dist}
+Wikimedia Commons.
+\newblock Voyager 2 velocity vs distance from sun, 2020.
+
+\bibitem{ocw_17}
+John Deyst and Edward Greitzer.
+\newblock Lecture notes: Orbit transfers and interplanetary trajectories, 2009.
+
+\bibitem{lambert_izzo}
+Dario Izzo.
+\newblock Revisiting lambert's problem.
+\newblock {\em Celestial Mechanics and Dynamical Astronomy}, 121(1):1--15,
+  October 2014.
+
+\bibitem{pykep}
+Dario Izzo, Will Binns, dariomm098, Alessio Mereta, Christopher~Iliffe Sprague,
+  dhennes, Bert~Van den Abbeele, Chris Andre, Krzysztof Nowak, Nat Guy, Alberto
+  Isaac~Barquín Murguía, Pablo, Frédéric Chapoton, GiacomoAcciarini, Moritz
+  v.~Looz, dietmarwo, Mike Heddes, Anatoli Babenia, Baptiste Fournier, Johannes
+  Simon, Jonathan Willitts, Mateusz Polnik, Sanjeev Narayanaswamy, The~Gitter
+  Badger, and Jack Yarndley.
+\newblock esa/pykep: Optimize, October 2020.
+
+\bibitem{aoe_conics}
+Frederick~H. Lutze.
+\newblock Lecture notes: Summary of patched conic approximations, 2009.
+
+\bibitem{poliastro}
+Juan Luis~Cano Rodríguez, Jorge~Martínez Garrido, Antonio Hidalgo, Shreyas
+  Bapat, Nikita Astrakhantsev, Eleftheria Chatziargyriou, María~Eugenia Cruz,
+  Dani, Abhishek Chaurasia, Yash-10, Alberto~Lorenzo Márquez, Dhruv Sondhi,
+  Tomek Mrugalski, Emily Selwood, Orestis Ousoultzoglou, Pablo~Rodríguez
+  Robles, Greg Lindahl, andrea carballo, Andrej Rode, Helge Eichhorn, Himanshu
+  Garg, Hrishikesh Goyal, Ian DesJardin, aOrionis, AntoniiaK, Josvth, Priyanshu
+  Rohilla, Angala, Ole Streicher, and Rafael~Araujo Lehmkuhl.
+\newblock {poliastro/poliastro: poliastro 0.15.0 (Earth edition)}, May 2021.
+
+\bibitem{assists_santos}
+Ignacio Santos.
+\newblock {\em Simulation and Study of Gravity Assist Maneuvers}.
+\newblock PhD thesis, 2020.
+
+\bibitem{od_uranus}
+T.~H. {Taylor}, R.~A. {Jacobson}, S.~P. {Synnott}, G.~D. {Lewis}, and J.~E.
+  {Riedel}.
+\newblock {Orbit determination for the Voyager II Uranus encounter}.
+\newblock In {\em Astrodynamics 1985}, pages 178--191, August 1986.
+
+\bibitem{assists_vassile}
+Massimiliano Vasile and Paolo DePascale.
+\newblock On the preliminary design of multiple gravity-assist trajectories,
+  2011.
+
+\end{thebibliography}

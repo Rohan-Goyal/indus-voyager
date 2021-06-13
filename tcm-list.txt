@@ -1,0 +1,79 @@
+From http://www.unmannedspaceflight.com/index.php?showtopic=4834&pid=246276&mode=threaded&start
+
+Voyager 1
+
+Number 	Date 	In Kernel? 	Reference 	Notes
+A1 	1977-09-11/13 	SuperTraj 	MSB09,MSB14 	Voyager 1 executed its first TCM in two parts on September 11 and 13. Both burns were about 20% underspeed,
+with the first achieving 2.45m/s and the second, 10.11m/s (Total 13.56m/s if both were in the same direction). The kernel available at NAIF suggests one TCM on
+1977-09-13T09:13:58/10:14:13 (All times in kernels are in Spice ET), averaging about 4.06mm/s^2 over 1 hour, for a total DV of about 14.6m/s which is a little
+bit high for the whole TCM. The kernel claims to be a patched conic curve fit, but this suggests that there is more to it. Also, the fact that the kernel comes as
+modified difference lines suggests that it is integrated.
+A1A 	1977-10-29 	No 	MSB11, MSB14 	Voyager 1 executed its second TCM on October 29. This was a cleanup of the TCM1 inaccuracy. This TCM does not
+appear to be recorded in the kernel.
+A2 	1978-06 			Cancelled?
+A3 	1979-01-29 	No 	MSB34, KF Voyager 	DV designed 4.146, achieved 4.208, DB.R -1725km, DB.T 13125km, DT +14m
+A4 	1979-02-21 03:58:45 	JUP230 	KF Voyager AAS-02-157 	DV designed 0.586, achieved 0.594, DB.R +710km, DB.T -100km, DT -14s. Kernel shows
+an impulse of 0.52m/s at 03:59:45. Table in AAS-02-157 shows reconstructed magnitude -107.955mm/s X, 303.418Y, -374.170Z (total magnitude 493.68mm/s)
+A5 	1979-04-09 		MSB52 	Voyager 1 executed a very large TCM as described in the Voyager 2 pre-flyby news conference, which occurred on Wednesday,
+May 30, 1979 at 10:30am in Washington, DC:
+
+    Since we last spoke to you, there have been a couple of spacecraft events I want to discuss. First, Voyager 1 performed its large trajectory correction maneuver
+on April 9. That was about a 7.3 hour burn of the thrusters that imparted a delta-V of something like 64 meters per second; used up about 30 kilograms of our
+propellant and, at this time, we have left about 55 kilograms of propellant.
+
+This is a post-Jupiter maneuver, which occurred at about 35 days after the Jupiter closest approach.
+A6 				Cancelled
+A7 	1979-12-07 		MSB52
+A8 	1980-10-10 19:09:51/23:56 TDB 	SAT337 	MSB52,MSB54,Saturn ICRF 	"Voyager 1 will perform a planned trajectory correction maneuver on
+October 10[, 1980]. The thrusters will fire briefly to accelerate the spacecraft about 2 meters per second and to change its course slightly. Withou this approximately
+ 13.7-minute burn, the spacecraft would be on a collision course with Titan, Saturn's largest satellite."
+
+Saturn ICRF reconstruction shows -1360.092mm/s X, 1183.900Y, -274.575Z (total magnitude 1823.970mm/s). Kernel shows acceleration of about 2.07mm/s for
+14m05s (845s) for a deltaV of about 1.749m/s
+A9 	1980-11-07 03:39:58 TDB 	No 	MSB52,MSB54, Saturn ICRF 	"A final course correction is scheduled for November 7[, 1980] if needed to
+"fine-tune" the flight path." Saturn ICRF shows -550.847mm/s X, 1229.873Y, -640.546Z (total magnitude 1492.09mm/s)
+
+* Voyager 2
+
+Number 	Date 	In Kernel? 	Reference 	Notes
+
+B1 	1977-10-11 	SuperTraj 	MSB10, MSB11 	Voyager 2 executed its first TCM on October 11. Based on experience from Voyager 1, the plan was
+updated and the desired correction was achieved to within 1%. Once again, the kernel captured this. The TCM as recorded took place on 1977-Oct-12T01:47:07/02:29:08,
+ so shorter than Voyager 1. The duration of the burn is 00:42:01 or 2521 seconds. The average acceleration was about 3.93mm/s^2, so the delta-v was about 9.91m/s.
+The aimpoint at Jupiter was changed, such that closest approach to Ganymede was changed from 55000km to 60000km. Also, the planned Post-Jupiter TCM was changed
+ from 70 days after closest approach to 11 days after. This was expected to save 8.6kg of propellant.
+
+B2 	1978-05-03 	No 	MSB19, MSB20 	203 seconds, 0.615m/s
+
+B3 	1979-05-25 			Voyager 2 executed a small TCM as described in the Voyager 1 pre-flyby news conference, which occurred on Wednesday, May 30, 1979
+ at 10:30am in Washington, DC:
+
+    Voyager 2 last Friday [May 25] performed a minor trajectory correction maneuver to improve the aiming at Jupiter. That was just a small, about a 1 1/2 meter per second
+adjustment in the velocity. It is now on a good trajectory for Jupiter which, of course, it will reach on July 9.
+
+B4 	1979-06-27 10:09:09 		Jupiter ICRF 	-563.738X, 522.016Y 29.424Z
+
+B5 	1979-07-10 00:39:39 		Jupiter ICRF 	8723.415X, -8807.558Y, -3908.574Z. This is during the Io Volcano Watch, and several images from the volcano watch
+were taken during the burn, so they were confident that the TCM thrusters are smooth enough to take data while burning.
+
+B6 	1979-07-23 16:09:50 		Jupiter ICRF 	-166.348X, 607.505Y, 500.864Z
+
+B7 	1981-02-26 		Unmannedspaceflight.com post
+
+B8 	1981-07-19 11:16:25 		Saturn ICRF 	-469.649X, 882.511Y, 648.463Z
+
+B9 	1981-08-18 21:26:16 		Saturn ICRF 	-230.733X, 1205.871Y, -534.300Z
+B10 	1981-09-29 		[1]
+B11
+B12
+B13 	1985-12-23 		Uranus Travel Guide
+B14 	1986-01-19 		Uranus Travel Guide
+B15 	1986-02-14 		Uranus Travel Guide, Unmannedspaceflight.com post
+B17 	1989-04-20 16:19:46 		Neptune ICRF 	91.925X, -339.117Y, -10.428Z
+B18 	1989-08-01 12:55:18 		Voyager Neptune Travel Guide, Neptune ICRF 	-335.093X, -850.755Y, -161.348Z
+B19 	(N-9d18h) 		Voyager Neptune Travel Guide, Neptune ICRF 	Cancelled
+
+    "The Navigation Team estimates that there is about a 25 percent chance that TCM B19 will not be needed, given that TCM B20 remains to remove some position errors
+
+B20 	1989-08-21 12:48:06 		Voyager Neptune Travel Guide, Neptune ICRF 	-477.544mm/sX, -8.441Y, -12.920Z
+MSB, Footnote 1, uranus travel guide

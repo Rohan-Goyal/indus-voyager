@@ -1,0 +1,320 @@
+No active lunar mission at the moment.
+
+Trajectory similar to voyager 2. Long-range tour of the solar system, using gravity assists and slingshot maneuvers.
+
+Voyager 2: Captured all the planets, basically. Not literally captured.
+
+There are cool python tools for trajectory projection, apparently.
+
+Voyager 2 relied on rare alignment of the planets - every century or so, or that order of magnitude.
+
+* Voyager 3: Electric boogaloo
+* Finding working alignments over the next 5 years
+- Prelim research
+- One starting point is to look at alignments between individual adjacent planets. If we can gravity assist our way from A to any point in range X, it makes sense to look for a time when planet B is roughly in range X. So assume we want to visit everything except Mars to start. So we want to visit Jupiter, Saturn, Uranus, Neptune, Pluto*.
+- A very simplified model would start with visiting every second planet - Jupiter, Uranus, Pluto.
+- More to it than trajectory - look at ideas like maximising cool data collection and taking pretty pictures.
+
+https://www.pbs.org/the-farthest/science/man-behind-mission/ outlines the Voyager conjunction
+
+
+* Locating 'injection points' for gravity assists for various planets
+
+The paper itself provides an overview of factors that affect this - such as how close to periapsis we fire the correctional maneuver, the altitude at periapsis. It seems increasing periapsis altitude increases both deflection and speed.
+
+- Start with this, since the mechanics seems relatively clean for me.
+- Look at momentum exchange formulae for gravity assists https://what-if.xkcd.com/146/
+- I think the sun frame in the 21-page thesis implies that if we had a ship flying /against/ the planet's direction of motion (relative to the sun), it would lose velocity when doing a gravity assist. But I'm not completely sure.
+
+The next thing to understand, conceptually, is how much we can vary the entry/exit angles for gravity assists, and how we can do thjat. It seems the size of B \dot T affects the size of psi, and so the gap between entry/exit angles.
+TODO: Intuitions about BdotT, increase, decrease, etc.
+
+TODO: Work backwards. Given a desired exit velocity and/or angle, find workable initial velocities and angles
+
+Basically, with this I can deduce what point to enter in order to get an appropriate exit trajectory, roughly.
+So I have the info to model a single gravity assist planet-jump. The problem is modelling many of them.
+Option 1 is repeated B-plane targeting.
+
+So first I need to figure out how to get from an Earth launch to a specific injection point, and then how to repeat it - given initial conditions, get to a specific point. Then I can apply this to every planet-jump.
+
+After that, I need to figure out how
+
+Broadly, we want all the planets approximating a spiral.
+https://in-the-sky.org//solarsystem.php?skin=1
+From here, initial impressions are that Saturn is tricky, but we can get Jupiter, Uranus, and Neptune in one path, especially if we go in 2025. NOTE: This neglects the distance from Earth at the time, and also things like planet drift over time. We should consider that, so come up with a model that shows the position of Jupiter /when we reach it/, and of other planets /when we would reach them/ to see if it works intuitively.
+TODO: Get a sense of the timescales over which these kinds of missions take place.
+Voyager took about 1.5-2 years to get from launch to making its Jupiter approach. So at a less optimal time (i.e now) it would probably take longer but we have a rough idea.
+
+** Voyager 1 timescale
+Launched Sep 9 1977.
+Hit Jupiter closest approach March 5 1979 (So 1.5 years from launch to Jupiter).
+Hit Saturn closest approach Nov 9 1980.
+So 1 year and 8 months from Jupiter to Saturn
+A few centuries later, it encounters the Starship Enterprise.
+
+** Voyager 2 timeline
+Launched August 20 77
+Hit Jupiter approach July 9 79. So just under 2 years
+Hit Saturn August 25 1981. So 2 years and 1 month from Jupiter.
+Hit Uranus Jan 24 1986. So 4.5 years from Saturn to Uranus
+Hit Neptune August 25 1989. So 3.5 years to Neptune.
+
+So basically: Jupiter at launch+2, Saturn at launch+4, Uranus at launch+9.5, Neptune at launch+13.
+That's a good starting point at least.
+https://voyager.jpl.nasa.gov/mission/timeline/#event-nasas-voyager-2-probe-enters-interstellar-space
+
+* Mathematical formulation, or at least approaching one
+- Do this after I have a decent grounding in the other
+* Choosing optimal orbital inclinations, etc.
+* If we are constrained within a particular window, what effects does that have?
+* Significance of alignments of planets: Optimal time window within next N years
+Heuristic models are helpful here - start with the first 2-3 planets.
+* Oberth Effect
+If we fire a burn at max velocity, the delta-V is greater - it seems to violate cons. of energy but it actually doesn't, since the expelled fuel has less kinetic energy when this happens. There's a nice model of it with a gravity well.
+* Simulating
+Python seems the way to go
+** PyKep
+No explicit gravity assists, but here's an interesting example: https://esa.github.io/pykep/examples/ex1.html
+
+Has support for gravity assist: https://esa.github.io/pykep/documentation/trajopt.html
+
+
+** Poliastro
+Has a sample showing how it can model and plot a mission with gravity assist maneuvers based on initial points and launch dates.
+https://docs.poliastro.space/en/stable/jupyter.html
+
+* <2021-05-12 Wed>
+NOTE: Send a semi-detailed update every few days, and add refs to wiki as I find them.
+
+** Outline of Voyager Mission (Original)
+- Flyby Jupiter
+- Flyby Saturn
+- Flyby Uranus
+- Flyby Neptune
+** Single maneuver
+We have multiple Lambert problems to solve, because we have multiple orbits
+
+Voyager maneuvered 2 hours after it approached Jupiter.
+/la
+** Launch date notes
+# Launch in 2024 implies we can visit Jupiter, Uranus, and Neptune. Saturn seems not to be aligned properly.
+
+
+TODO: Look at optimisation - does poliastro automatically optimise for min delta-V, or not? This requires looking at the actual math of Lambert problems. So basically diagnose software problems, and understand Lambert.
+* <2021-05-17 Mon>
+** Program output
+#+begin_src python
+# Version 1: Output impulse vectors
+  ('Jupiter: ((<Quantity 0. s>, <Quantity [ -317.65858346,  5084.00530914, '
+   '-4717.57429225] m / s>), (<Quantity 54201602.00142492 s>, <Quantity [  '
+   '3374.06669254, -10004.11396062,  -6273.73721924] m / s>))')
+
+  ('Saturn: ((<Quantity 0. s>, <Quantity [ -623.88026344, -9721.71782724, '
+   '-5688.78787712] m / s>), (<Quantity 1.30222504e+08 s>, <Quantity '
+   '[4189.09703677, 1477.39623254,  395.29026699] m / s>))')
+
+  ('Uranus: ((<Quantity 0. s>, <Quantity [ 4053.62849147, -2771.55106055, '
+   '-1606.75421222] m / s>), (<Quantity 2.34045364e+08 s>, <Quantity '
+   '[-1083.122061  ,  5973.45921536,  2903.26065571] m / s>))')
+
+  ('Neptune: ((<Quantity 0. s>, <Quantity [-248.19523953, 1134.14197714, '
+   '1009.26715727] m / s>), (<Quantity 3.02486406e+08 s>, <Quantity '
+   '[-1926.469025  ,  4431.83341975,  1621.88548139] m / s>))')
+#+end_src
+#+begin_src python
+# Version 2: Output get_full_cost() of maneuver
+
+'Jupiter: 19.224015832724874 km / s'
+
+'Saturn: 15.740644060638598 km / s'
+
+'Uranus: 11.896086432549 km / s'
+
+'Neptune: 6.635689621752347 km / s'
+#+end_src
+As far as I can tell from the docs, the first vector is the initial burn, and the second is what we get from the gravity assist. I'm not completely sure of this, but it seems quite likely.
+** Fixing the time problem
+- One idea would be to compare ephemeris files, if poliastro can output those.
+- Voyager had propulsion delta-V of about 500m/s, and gained much more from unpowered gravity assists.
+- Apparently, Jupiter-Saturn-Neptune are somewhat in line right now.
+- Possibility: Subpar models of gravity.
+- Patch-conic method: Earth and Jupiter: Trajectory between the two approx'ed.
+- Start with earth-centric orbit. When it exists Earth SOI, treat it as heliocentric and simulate. Then when we enter Jupiter SOI, model it as Jupiter orbit. So we have 3 conic section orbits, and we patch them together into a single trajectory. TODO: Check if poliastro uses this, and if not try to implement it. This gets a not necessarily optimised trajectory.
+- See if they have any builtins/predefined trajectories.
+- TODO: Send her the jupiter tutorial for poliastro)
+- Search google scholar for poliastro stuff
+** Patched Conics
+- First, we define a Hohmann-like transfer that takes us outside the planets SOI. Exits at a tangent to orbit, at hyperbolic velocity. Change in velocity maximised when we fire our corrective burn at perigee, i.e max init velocity.
+- When we enter target SOI, we slow the craft down for an insertion.
+- As far as I can tell, poliastro uses patched conic solutions already when modelling gravity assists. There's a poliastro guide on implementing gravity assists (it models a gravity assist to Jupiter based on the New Horizons mission), which uses methods relatively similar to the ones in my script - the gravity assist is taken care of automatically, without any need to explicitly program it.
+- Also, I did some reading and it turns out the delta-V figures poliastro gives are just the difference between initial and final velocities, so they include the delta-V from maneuvers and from gravity assists. This means that the actual delta-V from maneuvers is probably lower.
+- Additionally, the magnitudes of initial and final velocity for each gravity assist were quite similar, so this indicates the delta-V figures aren't as excessive as they seem. I'm looking to see if there's a way to view the delta-V from different sources separately.
+- I'm currently working on that, and also on trying to simulate a 2024 mission in Poliastro. I've also added some links related to Poliastro and patched conics to the wiki.
+
+- TODO: Simulate a modern bodged mission, and then try to tinker with poliastro.
+- TODO: Check out plyades, see if it's good. Archived, so that's out.
+  .
+* Poliastro 2024
+** TODO
+*** C3
+Keep it same for now, talk to Sharon about it on Monday
+*** Dates
+First, just jump forward a few years in time. See what disastrous errors that creates
+*** Initial orbit
+I doubt the voyager orbit would work. We start with a simple orbit around the Earth, possibly a geostationary one.
+NOTE: Initial orbit and/or C3 may be issues causing the messups in the current voyager clone.
+
+This is the main thing to figure out now.
+*** Planets to miss
+Missing Saturn, going with Jupiter, Neptune, Uranus.
+NOTE: The cost of maneuvers is mostly directional rather than magnitude changes in velocity. Implies most of it can be taken care of by gravity assist
+
+
+* <2021-05-31 Mon>
+Compare delta-V for voyager 2 (original) and the simulated mission I made. Look for data from ephemeris files, etc.
+Look through poliastro src to see how to separate maneuver/gravity assist delta-V
+Look into correctional maneuvers on voyager-2.
+IDEA: Run the simulation and also run an ephemeris-based sim of voyager in tandem, see the diffs and where they show up.
+Source of error: Too much abstraction of the craft. Ignores propellant stuff and mass and all that. Try to fix that
+IDEA: We have a plot of velocity vs distance from sun for voyager 2. If we can create such a graph for our knockoff in poliastro, we can compare them.
+TODO: Start working on the report, including notes on research/findings, mistakes, experiments, scripts, etc.
+
+https://docs.poliastro.space/en/v0.14.0/examples/Exploring the New Horizons launch.html shows that poliastro isn't perfect, especially for long burns. So maybe the error accumulates? See if the error for jupiter is more/less/similar than the error for saturn, etc.
+** Getting info on Voyager
+
+** Plot velocity v dist from sun in poliastro
+We can get a sample of this over time (I think poliastro lets us sample orbits), and pass that to plotly or matplotlib or whatever.
+
+Voyager 2 arrived within about 5-10 radii. It had inc of 10deg or less around jupiter, and stayed close to eliptic
+Voyager had about 9 correction maneuvers, total budget of 190m/s.
+
+
+Read about voyager, mess with ephemeris
+
+* So what have we learned?
+Voyager had a total delta-V budget of about 200m/s. Fired a total of about 9 correctional maneuvers
+Our own voyager 2.5 mission had much lower velocities at pretty much every distance than it should.
+Interestingly, using the proper dates leads to proper velocities at all times, pretty much. So it suggests one problem might actually be the plotting rather than anything else. Try messing with the scale for the staticorbitplotter?
+Write a quick func to check the norms of separate dvs.
+* <2021-06-02 Wed>
+
+Most likely, the problem is with the modelling rather than the plots. So the lack of correction maneuvers, and the abstractions poliastro uses. We know we can get errors on the order of 3%, so its possible these stack.
+Most likely, poliastro has an inadequate force model. So even if I force the times to match voyager, it still doesn't plot correctly.
+
+TODO: Try to mess with plotting scales just in case
+# TODO: Get voyager delta-V from horizons, using scripts. Then compare that to the delta-V on my simulated mission.
+# First approximation: Just take days shortly after and before closest approach, and take the difference in velocity vectors.
+TODO: Get data on voyager: Isp, thrust, etc. Also try to find maneuver delta-V if possible.
+
+TODO: Maybe try pykep if I get desperate
+
+Force model:
+Time model:
+Correction maneuvers:
+
+* Messing with scales
+
+* Ephemeris Delta-V
+From the data, the jupiter delta-V is 14km/s
+#+begin_src
+In [49]: vsub(47,45)
+Out[49]:
+(<Quantity [-11.05536094,  -9.61441214,  -2.31458803] km / s>,
+ <Quantity 14.83291084 km / s>)
+#+end_src
+
+Saturn is 15
+#+begin_src
+In [58]: vsub(100,98)
+Out[58]:
+(<Quantity [12.79594337, -7.24734966, -4.27395355] km / s>,
+ <Quantity 15.31427187 km / s>)
+#+end_src
+
+Uranus is 6
+#+begin_src
+In [68]: vsub(210,208)
+Out[68]:
+(<Quantity [5.63390722, 0.77951089, 1.58976787] km / s>,
+ <Quantity 5.90558292 km / s>)
+#+end_src
+
+Neptune is 15
+#+begin_src
+In [74]: vsub(299,297)
+Out[74]:
+(<Quantity [ -8.13444399,   7.73798519, -10.31194071] km / s>,
+ <Quantity 15.24407147 km / s>)
+#+end_src
+We got this by comparing delta-V about 1 week after to delta-V about 2 weeks before. Comparing it to 1 week before had pretty similar results, though. Like, within 2-3%.
+This mostly doesn't match up well with my simulation. So it seems that the error is in the modelling rather than the graphing. Back to square 1, I guess.
+
+NOTE: Voyager had initial velocity from rocket. Is that taken into account? It probably is, since we define our initial orbit.
+
+* Voyager Burn Data
+Found it in a few papers on sci-hub. Not all of them give directions, though. They give something called SMAA and SMIA. TODO: Figure out what those are.
+NOTE: I can get the voyager 2 correctional delta-V from the small (2-odd m/s) jumps in velocity before/after gravity assists from ephem.
+Each had about 2 correctional burns before flyby. Relatively small.
+** Jupiter
+
+** Saturn
+
+** Uranus
+
+** Neptune
+
+* Step 1: Correctional Maneuvers
+
+* Step 2: Poliastro manually model gravity assists using threebody module if necessary
+<2021-06-07 Mon>
+Discussed improvements to plotting, etc, and discussed research into Voyager TCMs.
+Tasks:
+- Cross reference ephem with data on TCM maneuvers, to find delta-V vectors.
+- Keep trying to figure out if the force model is correct or broken
+- If possible, find thrust/I_sp of voyager
+* TCM dates
+|   N | Exec Time [Days] |  Exec Date | Delta-V [Note: Units seem a bit confused] |
+|-----+------------------+------------+---------|
+|   3 | J-45             | 1979-05-25 |   1.384 |
+|   4 | J-12             | 1979-06-27 |   0.574 |
+|     |                  |            |         |
+|   8 | S-38             | 1981-07-20 |         |
+|   9 | S-8.5            | 1981-08-16 |         |
+|     |                  |            |         |
+|  12 |                  | 1984-11-13 |     1.5 |
+|  13 |                  | 1985-12-23 |     2.1 |
+|     |                  |            |         |
+| 17B |                  | 1988-11-11 |    0.45 |
+| 17C |                  | 1989-04-20 |    0.35 |
+|  18 |                  | 1989-08-01 |    0.92 |
+|  19 | Cancelled        |            |         |
+|  20 |                  | 1989-08-21 |    0.47 |
+|     |                  |            |         |
+* Outlining Pykep
+** 2024
+ seq=[jupiter, uranus, neptune]
+ t0=[range from beginning of 2024 to end 2025]
+ tof=[TODO]
+ vinf=[range from 30 to 50 for now, based on original voyager]
+ multi_objective=true
+ tof_encoding="alpha"
+* TCM stuff
+- Fill out TCM table
+- Try to get TCM data in more depth if necessary
+- For range around TCM date (day-1, day, day+1), download ephem.
+- Infer delta-V as best as possible from ephem
+- Define poliastro delta-V vector maneuver to do that.
+** Option 1
+Include that vector before or after the command to assist_to_planet
+** Option 2
+Break up assist to planet to include a delta-V fired at a given date. So basically define the orbit. Prop it to a particular date, apply delta-V maneuver, and continue with the resulting orbit, with the same flyby  date target set.
+
+Define the assist function to include a list of maneuvers as params.
+So for i in maneuver_List, prop to i.epoch, apply_maneuver i.impulse. Then, finally, lambert to the target.
+
+TODO: Set up git and pyenv
+
+So basically, define flyby, target.
+Successively propagate and update flyby,target.
+Finally, propagate the current orbit to the target_date.
+First, try this and see what happens. If it throws errors, then after the updates, include a lambert call to try to get back on course.
