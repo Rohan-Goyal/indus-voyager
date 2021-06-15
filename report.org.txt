@@ -349,8 +349,26 @@ By selecting certain ranges of ephemeris files, I was able to find the delta-V o
 
 In order to implement these in my simulation, I created a hashtable of maneuvers, each associated with a name (the hashtable key), an epoch, and an impulse (both of which were stored in a tuple).
 I also redefined the ~assist_to_planet~ function, to automatically fire these maneuvers at the appropriate epoch. I defined a routine to search through that hashtable to find maneuvers associated with dates within a certain time range, and to interrupt the orbit propagation to fire those burns.
+*** Code Snippets
+**** Sample of a maneuver, represented as a hashtable entry
 #+begin_src python
-  # TODO
+"04": (
+    maneuver([563.738, 522.016, 29.424] * u.mm / u.s),
+    time("1979-06-27 10:09:09", scale="utc").tdb,
+),
+#+end_src
+**** Function to retrieve all impulses for the current section of the mission
+#+begin_src python
+def impulses(date, current, mans=tcm()):
+    # Get all impulses between end of current orbit and target dat
+    return [i for i in mans.values() if current.epoch < i[1] < date]
+#+end_src
+**** Subroutine to apply impulses sequentially during flyby
+#+begin_src python
+flyby, target = current.apply_maneuver(man, intermediate=True)
+for i in impulses(arrival, current):
+    flyby.propagate(i[1])
+    (flyby,) = flyby.apply_maneuver(i[0], intermediate=True)
 #+end_src
 # TODO: Add ICRF papers to bib
 

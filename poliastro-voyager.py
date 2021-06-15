@@ -146,7 +146,7 @@ uranus_end, uranus_cost = assist_to_planet(
     Uranus, uranus_date, saturn_end, "red", (5, 70)
 )
 neptune_end, neptune_cost = assist_to_planet(
-    Neptune, neptune_date, uranus_end, "green", (40, 70)
+    Neptune, neptune_date, uranus_end, "green", (40, 68)
 )
 
 vectors = [
