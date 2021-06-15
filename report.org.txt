@@ -1,5 +1,10 @@
 * Introduction
 # TODO
+- Outline task
+- How I went about it
+- Outline report structure
+- Brief overview of what I learned
+-
 * Research
 ** Lambert
 *** Problem
@@ -41,7 +46,10 @@ We can see that in order to maximise the change in velocity of the flyby, we sho
 
 #+DOWNLOADED: file:///home/rohan/d/indus-2/grav%20assist.png @ 2021-06-07 23:34:02
 [[file:Research/2021-06-07_23-34-02_grav assist.png]]
-TODO: Explain image, cite
+
+In the diagram above, the object enters with hyperbolic velocity $V_{\infinity}^-$ along the arrival asymptote, and exits with velocity $V_{\infinity}^+$ along the departure asymptote.
+$r_p$ denotes the point of closest approach (periapsis). The body follows a symmetric hyperbolic trajectory, so that the entry and exit asymptotes have related true anomalies \cite{assists_santos}.
+The angle of deflection is related to the true anomaly of the body when it exits the planet's SOI (\theta_a): $\frac{\psi}{2}=\theta_a - \frac{\pi}{2}$
 
 ** Patched Conic Approximation
 The Patched Conic Approximation is a method for getting approximate solutions to gravity assist maneuvers and other three-body problems. It divides the problem into three separate two-body problems - the initial planetocentric orbit, a heliocentric transfer orbit, and another planetocentric orbit (around the target planet), and defines `patch conditions', such as conditions on its velocity as it leaves the SOI (Sphere of Influence) of the first planet. \cite{aoe_conics}
@@ -91,18 +99,23 @@ We can see that the gravity assists provided most of the delta-V for Voyager 2 b
 Voyager 2 took advantage of a rare planetary alignment (which occurs every 175 years) to go on a `Grand Tour' of the solar system, and visit all four outer planets, while Voyager 1 only visited Jupiter and Saturn before exiting the solar system. The reliance on gravity assists allowed this trajectory to be feasible, given constraints on delta-V, thrust, etc.
 Voyager 2 provided the first flyby of Uranus and Neptune, and gathered exceptional data on things like the moons of Saturn and Jupiter.
 # TODO cites
-# Grand tour relied on gravity assists
-# Delta-V stats
 # Alignment
 ** Correctional Maneuvers
 Trajectory Correction Maneuvers (TCMs) are performed before or after flybys, to correct for minor distortions caused by imperfect navigation, uncertainty in craft position/velocity, etc. Since these errors compound over time, periodic TCMs ensure the spacecraft stays on its intended trajectory. TCMs are usually on the order of magnitude of m/s, and most of the large maneuvers are in the form of unpowered gravity assists.
 
-Voyager's Trajectory Correction Maneuvers relied on four small thrusters, which were collectively able to exert about 0.5 pounds (2.224 Newtons) of thrust \cite{backgrounder1981}.
+Voyager's Trajectory Correction Maneuvers relied on four small hydrazine thrusters, which were collectively able to exert about 0.5 pounds (2.224 Newtons) of thrust \cite{backgrounder1981}.
 
 Voyager's flybys of Uranus and Neptune were the first flybys of the planet, and so data on the gravitational parameter (and on other factors, such as mass/radius of moons) was solely based on observation from Earth. Inaccuracies in the estimation/modelling due to this caused Voyager to deviate from the target orbit, and were dealt with via TCMs. \cite{od_jupiter}
 Additionally, Voyager gained small amounts of delta-V due to orientation changes, such as to gather data or send out radiometric pulses. Similarly, voyagers roll thrusters (responsible for these changes in orientation) were slightly imbalanced, and so TCMs were used periodically to account for the effects of that \cite{od_uranus}
 
 Voyager 2 executed a total of 20 TCMs, or about 5 per flyby. Most of these TCMs happened shortly (on the order of a few months or less) before or after flybys.
+
+TCMs were reconstructed in a series of papers by R.A Jacobson based on three main data sources:
+1. Voyager radiometric tracking: Having Voyager send radio waves of a known frequency back to Earth, and using the doppler effect to deduce its distance from Earth and velocity.
+2. Optical navigation data: Comparing the data from Voyager's cameras/sensors to visual data of star backgrounds, etc.
+3. Satellite astrometry: Observing the relative position of Voyager 2 to satellites, planets, and other celestial bodies from various observatories, and cross-referencing the data to get an approximation of its position in space.
+
+The orbit reconstruction relied on a dynamic force model, including the gravitational forces of moons, and non-gravitational forces such as solar radiation pressure and thruster imbalances on the Voyager craft.
 
 ** Oberth Effect
 The Oberth effect is a phenomenon where a small impulse can create a large change in kinetic energy, if the initial velocity is high enough. In space travel, this means that if a burn is fired at (or centered around) periapsis, it can increase the kinetic energy, giving the craft additional hyperbolic velocity and allowing it to exit the planet's Sphere of Influence. Intuitively, this arises from the fact that firing a burn at periapsis results in both the chemical and mechanical energy of the fuel being converted to kinetic energy for the rocket. \cite{aapt_oberth}
@@ -124,7 +137,7 @@ Thus, we see the rocket gains kinetic energy $\frac{1}{2}M(\Delta v)^2 + Mv_B \D
 The energy of the exhaust is $E_{ex} = \frac{1}{2}m_{ex}(v_b-v_{ex})^2-m_{ex}gh_b = \frac{1}{2}m_{ex}v_{ex}^2 - m_{ex}v_B + \frac{1}{2}m_{ex}v_B^2 - m_{ex}gh_B$
 Thus, we see the exhaust /loses/ kinetic energy $\frac{1}{2}m_{ex}v_{ex}^2 + m_{ex}v_B$, meaning the total energy of the system remains constant.
 
-In the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
+With the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
 
 * Practice
 ** Experimentation
@@ -147,8 +160,24 @@ Poliastro also uses patched conics computations to achieve higher accuracy in gr
 
 Poliastro uses patched conic methods to calculate the delta-V gained from unpowered flybys, depending on input parameters like the hyperbolic insertion velocity, the radius of the flyby orbit, etc.
 
-*** Automatic Gravity Assists
+*** Automatic Gravity Assists TODO
 \cite{poliastro_jupiter} demonstrates a sample poliastro mission which performs a gravity assist around Earth to reach Jupiter, without us needing to explicitly program parameters for the assist. The mission is based on the New Horizons Juno probe.
+
+Poliastro's Lambert solver is `aware' of the gravitational influence of the planet, and automatically performs gravity assists. As a result, we need simply define the initial and target orbits for poliastrio to model a gravity assist.
+
+#+begin_src python
+# And now, go to Jupiter!
+jupiter = Ephem.from_body(Jupiter, time_range(date_launch, end=date_arrival))
+
+ss_j = Orbit.from_ephem(Sun, jupiter, date_arrival)
+# Solving for maneuver to Jupiter
+man_jupiter = Maneuver.lambert(ic2_end, ss_j)
+imp_a, imp_b = man_jupiter.impulses
+
+print("Initial impulse:", imp_a)
+print("Final impulse:", imp_b)
+#+end_src
+
 ** Plotting Planets
 For an intuitive overview of the Voyager 3 mission, I created a plot of the planets at various points. Based on the Voyager 2 mission timelines, I plotted the planets at the points they would be when Voyager 3 arrives at them.
 
@@ -325,19 +354,21 @@ I also redefined the ~assist_to_planet~ function, to automatically fire these ma
 #+end_src
 # TODO: Add ICRF papers to bib
 
-
 * Problems/Errors
-** Calculating Delta-V
-- Poliastro does not separate delta-V due to maneuvers from delta-V caused by flybys.
--
 ** Delta-V Mismatch
-- Although rv vectors matched ephemeris, delta-V due to gravity assists did not match existing data
-- Diagnosis: Both delta-V from ephemeris, and from the graph.
-- Error scale/significance: Not very
-- Solution: Define correction maneuvers
-** Timeline Mismatch
+When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data. (TODO: Datapoints).
+The delta-V errors accumulated over time, but the mismatch was small enough that it could be caused by relatively minor inaccuracies in the simulation.
+
+The source of this problem was the lack of trajectory correction maneuvers, which led to the simulated trajectory diverging from the actual voyager 2 trajectory. In order to solve it, I introduced a routine to automatically perform trajectory correction maneuvers at the appropriate epoch, with the delta-V and duration defined based on orbit determination data for the original voyager.
+
+** Calculating Delta-V
+Poliastro does not separate delta-V due to maneuvers from delta-V caused by flybys. Additionally, it is unable to model constraints such as delta-V budgets, or thruster power (at least as far as I can tell).
+Poliastro defines a method ~get_total_cost~ which returns the total delta-V caused by the maneuver, including the delta-V gained by the slingshot. In order to cross-check the simulation with the voyager flight data, I relied on looking at instantaneous velocity at various critical points (just before, just after, and during flybys).
+Since correctional maneuvers happened before gravity assists rather than in tandem, I was able to verify the delta-V costs of those, and check that they conformed to the delta-V budget of Voyager 2.
+** COMMENT Timeline Mismatch
 - Really embarassing, honestly. Consider just not mentioning it.
-** Initial Orbit
+** COMMENT Initial Orbit
+Commented until I actually figure it out
 * COMMENT Gravity Assists, Voyager, Practice
 ** Grav assists
 ** Voy
@@ -347,7 +378,7 @@ I also redefined the ~assist_to_planet~ function, to automatically fire these ma
 - Errors with parameters
 - Excess fuel cons/delta-V
 # Features - generic function for flyby, specifies c3 parameter and init orbit, outputs impulses (vectors and magnitudes), and velocities at points.
-TODO: Missing propagate commands after the flybys. Is that an issue? Doing the assist at the wrong moment? No idea.
+# NOTE : Missing propagate commands after the flybys. Is that an issue? Doing the assist at the wrong moment? No idea.
 ** Additional research
 - research on voy maneuvers and elta-v ({planet} orbit.pdf)
 - stone{date}.pdf

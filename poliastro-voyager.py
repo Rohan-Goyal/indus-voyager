@@ -1,5 +1,4 @@
 from pprint import pprint
-
 from astropy import units as u
 
 from astropy.coordinates import solar_system_ephemeris
@@ -10,6 +9,7 @@ from poliastro.maneuver import Maneuver
 from poliastro.plotting import StaticOrbitPlotter, OrbitPlotter2D
 from poliastro.twobody import Orbit
 from poliastro.util import time_range, norm
+
 # from poliastro.threebody import *
 
 solar_system_ephemeris.set("jpl")
@@ -25,9 +25,7 @@ jupiter_date = Time("1979-07-09 22:29", scale="utc").tdb
 proper = 1
 if proper:
     saturn_date = Time("1981-08-25 03:24", scale="utc").tdb
-    uranus_date = Time(
-        "1986-01-24", scale="utc"
-    ).tdb
+    uranus_date = Time("1986-01-24", scale="utc").tdb
 
     # TODO: Get a precise time, see if that helps at all.
     neptune_date = Time("1989-08-25", scale="utc").tdb
@@ -55,7 +53,7 @@ def assist_to_planet(
     color="black",
     delta=TimeDelta(0 * 60, format="sec"),
     anom=(0, 180),
-    impulses=[]
+    impulses=[],
 ):
     planet_orbit = Ephem.from_body(planet, time_range(launch_date, end=next_date))
     ss = Orbit.from_ephem(Sun, planet_orbit, target_date)
@@ -136,30 +134,29 @@ print()
 pprint(f"Neptune: {neptune_cost}")
 print()
 
-print(jupiter_impulse)
-
-
 # Maneuvers
 # Hashtable, with names TCM1, TCM2, etc. Each value is a maneuver with a time specified as an astropy epoch, and a vector of delta-V in
-m=Maneuver
-# tcm={"01":m(()),
-#      "02":m(()),
-#      "03":m(()),
-#      "04":m((epoch,[-563.738,522.016,29.424]*u.mm/u.s)),
-#      "05":m((epoch,[8723.415,-8807.558,-3908.574]*u.mm/u.s)),
-#      "06":m((epoch,[-166.348,607.505,500.864]*u.mm/u.s)),
-#      "07":m(()),
-#      "08":m((epoch,[-469.649,882.511,648.463]*u.mm/u.s)),
-#      "09":m((epoch,[-230.733,1205.817,-534.300]*u.mm/u.s)),
-#      "10":m(()),
-#      "11":m(()),
-#      "12":m(()),
-#      "13":m(()),
-#      "14":m(()),
-#      "15":m(()),
-#      "16":m(()),
-#      "17":m((epoch,[91.925,-339.117,-10.428]*u.mm/u.s)),
-#      "18":m((epoch,[-335.093,-850.755,-161.348]*u.mm/u.s)),
-#      "19":m(()), # Cancelled
-#      "20":m((epoch,[-477.544,-8.441,-12.920])),
-#      }
+m = Maneuver.impulse
+t = Time
+tcm = {
+    # "01":m(()),
+    # "02":m(()),
+    # "03":m(()),
+    "04": (m([563.738, 522.016, 29.424] * u.mm / u.s), t("1979-06-27 10:09:09")),
+    "05": (m([8723.415, -8807.558, -3908.574] * u.mm / u.s), t("1979-07-10 00:39:39")),
+    "06": (m([-166.348, 607.505, 500.864] * u.mm / u.s), t("1979-07-23 16:09:50")),
+    # "07":m(()),
+    "08": (m([-469.649, 882.511, 648.463] * u.mm / u.s), t("1981-07-19 11:16:25")),
+    "09": (m([-230.733, 1205.817, -534.300] * u.mm / u.s), t("1981-08-18 21:26:16")),
+    # "10":m(()),
+    # "11":m(()),
+    # "12":m(()),
+    # "13":m(()),
+    # "14":m(()),
+    # "15":m(()),
+    # "16":m(()),
+    "17": (m([91.925, -339.117, -10.428] * u.mm / u.s), t("1989-04-20 16:19:46")),
+    "18": (m([-335.093, -850.755, -161.348] * u.mm / u.s), t("1989-08-01 12:55:18")),
+    # "19":m(()), # Cancelled
+    "20": (m([-477.544, -8.441, -12.920] * u.mm / u.s), t("1989-08-21 12:48:06")),
+}
