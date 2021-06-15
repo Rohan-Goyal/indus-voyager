@@ -90,7 +90,6 @@ We can see that the gravity assists provided most of the delta-V for Voyager 2 b
 
 #+DOWNLOADED: file:///home/rohan/d/indus-2/768px-Voyager_2_velocity_vs_distance_from_sun.svg.png @ 2021-06-07 15:35:21
 [[file:Research/2021-06-07_15-35-21_768px-Voyager_2_velocity_vs_distance_from_sun.svg.png]]
-(TODO: I plan to add a bit more on the design of voyager and its capabilities)
 *** COMMENT Science and Research
 - Atmospheric composition of planets and moons
 - Visual reconnaissance
@@ -343,7 +342,7 @@ These diverged significantly from the results of my script (which I've included 
 'Neptune: 22.613330589378773 km / s'
 #+end_src
 ** Correction Maneuvers from Ephemeris and Mission Reports
-Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in poliastro based on orbit determination papers, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
+Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in poliastro based on orbit determination papers \cite{icrf_jupiter} \cite{icrf_saturn} \cite{icrf_neptune}, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
 Since some of the data was lacking, I cross-referenced it with voyager ephemeris data from the JPL horizons system, which recorded the velocity vectors at different points in time. I wrote a python script to parse these ephemeris files, which could calculate the delta-V between various points in time and identify patterns which matched maneuvers (such as a short period of time with delta-V higher than average, or an impulsive maneuver which caused a large near-instantaneous change in velocity).
 By selecting certain ranges of ephemeris files, I was able to find the delta-V of most of Voyager's TCMs.
 
@@ -370,7 +369,6 @@ for i in impulses(arrival, current):
     flyby.propagate(i[1])
     (flyby,) = flyby.apply_maneuver(i[0], intermediate=True)
 #+end_src
-# TODO: Add ICRF papers to bib
 
 * Problems/Errors
 ** Delta-V Mismatch
@@ -388,6 +386,8 @@ Since correctional maneuvers happened before gravity assists rather than in tand
 ** COMMENT Initial Orbit
 Commented until I actually figure it out
 * COMMENT Gravity Assists, Voyager, Practice
+Voyager 2, cite ICRF, and datapoints for delta-V mismatch.
+Patched conics, poliastro grav assists, introduction
 ** Grav assists
 ** Voy
 ** Practice:

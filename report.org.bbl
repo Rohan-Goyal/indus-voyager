@@ -62,6 +62,23 @@ Dario Izzo, Will Binns, dariomm098, Alessio Mereta, Christopher~Iliffe Sprague,
   Badger, and Jack Yarndley.
 \newblock esa/pykep: Optimize, October 2020.
 
+\bibitem{icrf_jupiter}
+RA~Jacobsen.
+\newblock Pioneer and voyager jupiter encounter orbit reconstruction in the
+  icrf system.
+\newblock 2002.
+
+\bibitem{icrf_saturn}
+R.~Jacobson.
+\newblock Reconstruction of the voyager saturn encounter orbits in the icrf
+  system.
+\newblock 2003.
+
+\bibitem{icrf_neptune}
+Robert Jacobson.
+\newblock {\em Reconstruction of the Voyager 2 Neptune Encounter in the ICRF
+  System}.
+
 \bibitem{aoe_conics}
 Frederick~H. Lutze.
 \newblock Lecture notes: Summary of patched conic approximations, 2009.
