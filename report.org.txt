@@ -1,10 +1,19 @@
 * Introduction
-# TODO
-- Outline task
-- How I went about it
-- Outline report structure
-- Brief overview of what I learned
+** Task Description
+My overarching task was to design and simulate a `Voyager 3' mission, which would launch around 2024-2025 and visit as many of the outer planets as possible.
+** How I went about it
+I began by exploring the theory behind deep-space missions like this one. I looked at the mechanics of gravity assist maneuvers to change velocity/direction, such as how they're used to achieve high delta-V without using large amounts of propellant.
+
+I also researched mathematical models of these maneuvers such as numerical solutions to Lambert's Problem (also known as the orbital boundary value problem), which deals with determining a transfer orbit between two known orbits (in the form of position and velocity vectors), given a target value for the time of flight. This included looking into the method of patched conics, which models a three-body gravity assist problem as a set of two-body problems, and defines a set of `patch conditions' which connect the solutions to individual two-body problems into a single trajectory.
+
+My first experimental step was to design and verify a simulation of the Voyager 2 mission, based on the historical flight data. This would allow me to test my approach to modelling by cross-checking it with established data, before using it to simulate a completely new mission.
+Based on this, I ended up doing additional research into the specific design of Voyager 2 and its mission planning, such as the Trajectory Correction Maneuvers voyager relied on to stay on course and compensate for unexpected fluctuations.
+
+With this done, I wrote some scripts to plot the planets over time, to get an idea of feasible mission plans for 2024. I learned that Saturn was out of alignment with the other outer planets, and so Voyager 3 would only be able to visit Jupiter, Uranus, and Neptune.
+** Brief overview of what I learned
+TODO
 -
+
 * Research
 ** Lambert
 *** Problem
@@ -76,7 +85,7 @@ We know that $\Delta V = V_{\infinity}$, i.e. the velocity of the spacecraft rel
 
 The velocity of the spacecraft relative to the sun is equal to the sum of the heliocentric velocity of the planet and the velocity of the spacecraft relative to the planet. Mathematically, $V_1=V_{\infinity}+V_{c_1}$ \cite{ocw_17}
 
-# \beta , the `exit angle', is related TODO
+\beta , the `exit angle', is related to the relative magnitudes of V, V_1 and V_c_1, as well as the angle \phi between V and V_c.
 
 ** Voyager 2
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
@@ -290,10 +299,6 @@ pprint(f"Neptune: {neptune_cost}")
 #+DOWNLOADED: file:///home/rohan/d/indus-2/voyager%202.png @ 2021-06-07 12:44:01
 [[file:Practice/2021-06-07_12-44-01_voyager 2.png]]
 
-** Plotting 2024 Mission
-Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets
-*** Defining Initial Orbit
-Since there weren't any ephemeris files I could rely on, I used an alternative method to define the initial orbit.
 ** Checking Against Voyager 2
 Due to some uncertainties I had about the results of my original simulation, I tried to verify them against known records for the voyager spacecraft.
 
@@ -369,7 +374,24 @@ for i in impulses(arrival, current):
     flyby.propagate(i[1])
     (flyby,) = flyby.apply_maneuver(i[0], intermediate=True)
 #+end_src
+**** COMMENT Outputs
+#+begin_src
+[(<Quantity 1.01105114 AU>, <Quantity 38.97381359 km / s>),
+ (<Quantity 5.32412652 AU>, <Quantity 12.77467893 km / s>),
+ (<Quantity 9.58900767 AU>, <Quantity 15.43777008 km / s>),
+ (<Quantity 19.11545267 AU>, <Quantity 17.85828753 km / s>),
+ (<Quantity 30.21376221 AU>, <Quantity 18.84055891 km / s>)]
 
+
+'Jupiter: 19.224017096185012 km / s'
+'Saturn: 24.662460566215962 km / s'
+'Uranus: 29.28157445966514 km / s'
+'Neptune: 22.617026306586364 km / s'
+#+end_src
+** Plotting 2024 Mission
+Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets
+*** Defining Initial Orbit
+Since there weren't any ephemeris files I could rely on, I used an alternative method to define the initial orbit.
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data. (TODO: Datapoints).
@@ -379,15 +401,20 @@ The source of this problem was the lack of trajectory correction maneuvers, whic
 
 ** Calculating Delta-V
 Poliastro does not separate delta-V due to maneuvers from delta-V caused by flybys. Additionally, it is unable to model constraints such as delta-V budgets, or thruster power (at least as far as I can tell).
+
 Poliastro defines a method ~get_total_cost~ which returns the total delta-V caused by the maneuver, including the delta-V gained by the slingshot. In order to cross-check the simulation with the voyager flight data, I relied on looking at instantaneous velocity at various critical points (just before, just after, and during flybys).
+
 Since correctional maneuvers happened before gravity assists rather than in tandem, I was able to verify the delta-V costs of those, and check that they conformed to the delta-V budget of Voyager 2.
 ** COMMENT Timeline Mismatch
 - Really embarassing, honestly. Consider just not mentioning it.
 ** COMMENT Initial Orbit
 Commented until I actually figure it out
 * COMMENT Gravity Assists, Voyager, Practice
-Voyager 2, cite ICRF, and datapoints for delta-V mismatch.
+Voyager 2, and datapoints for delta-V mismatch.
 Patched conics, poliastro grav assists, introduction
+
+Voy 2 and intro
+Conics and poliastro
 ** Grav assists
 ** Voy
 ** Practice:
