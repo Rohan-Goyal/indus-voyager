@@ -90,7 +90,7 @@ The velocity of the spacecraft relative to the sun is equal to the sum of the he
 
 \beta , the `exit angle', is related to the relative magnitudes of V, V_1 and V_c_1, as well as the angle \phi between V and V_c.
 
-** Voyager 2 TODO
+** Voyager 2
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
 Due to the gravity assists, Voyager 2 was able to maintain relatively high velocities, even while budgeting a total of about 190m/s of delta-V for maneuvers.
 
@@ -109,8 +109,14 @@ We can see that the gravity assists provided most of the delta-V for Voyager 2 b
 *** Grand Tour
 Voyager 2 took advantage of a rare planetary alignment (which occurs every 175 years) to go on a `Grand Tour' of the solar system, and visit all four outer planets, while Voyager 1 only visited Jupiter and Saturn before exiting the solar system. The reliance on gravity assists allowed this trajectory to be feasible, given constraints on delta-V, thrust, etc.
 Voyager 2 provided the first flyby of Uranus and Neptune, and gathered exceptional data on things like the moons of Saturn and Jupiter.
-# TODO cites
-# Alignment
+*** Tracking and Attitude/Orientation
+Voyager receives constantly transmitting waves from Earth, changes their frequency by a fixed ratio, and transmits it back to Earth. The craft's velocity can be measured from the change in frequency of waves received on Earth due to the doppler effect. \cite{backgrounder_1980}
+
+Voyager's distance from Earth can be measured by transmitting a digital code to Voyager and measuring the total time elapsed until it is returned. However, doing this accurately requires a sense of Voyager's velocity. \cite{backgrounder_1980}
+
+
+Celestial Reference: Electro-optical sensors view the Sun and the star Canopus. Data from these are fed to the automatic attitude/orientation adjustment system, allowing Voyager to automatically adjust its orientation around the three axes. \cite{backgrounder_1980}
+
 ** Correctional Maneuvers
 Trajectory Correction Maneuvers (TCMs) are performed before or after flybys, to correct for minor distortions caused by imperfect navigation, uncertainty in craft position/velocity, etc. Since these errors compound over time, periodic TCMs ensure the spacecraft stays on its intended trajectory. TCMs are usually on the order of magnitude of m/s, and most of the large maneuvers are in the form of unpowered gravity assists.
 
