@@ -1,7 +1,7 @@
 * Introduction
 ** Task Description
 My overarching task was to design and simulate a `Voyager 3' mission, which would launch around 2024-2025 and visit as many of the outer planets as possible.
-** How I went about it
+** Methodology
 I began by exploring the theory behind deep-space missions like this one. I looked at the mechanics of gravity assist maneuvers to change velocity/direction, such as how they're used to achieve high delta-V without using large amounts of propellant.
 
 I also researched mathematical models of these maneuvers such as numerical solutions to Lambert's Problem (also known as the orbital boundary value problem), which deals with determining a transfer orbit between two known orbits (in the form of position and velocity vectors), given a target value for the time of flight. This included looking into the method of patched conics, which models a three-body gravity assist problem as a set of two-body problems, and defines a set of `patch conditions' which connect the solutions to individual two-body problems into a single trajectory.
@@ -10,9 +10,12 @@ My first experimental step was to design and verify a simulation of the Voyager 
 Based on this, I ended up doing additional research into the specific design of Voyager 2 and its mission planning, such as the Trajectory Correction Maneuvers voyager relied on to stay on course and compensate for unexpected fluctuations.
 
 With this done, I wrote some scripts to plot the planets over time, to get an idea of feasible mission plans for 2024. I learned that Saturn was out of alignment with the other outer planets, and so Voyager 3 would only be able to visit Jupiter, Uranus, and Neptune.
-** Brief overview of what I learned
-TODO
--
+** What I Learned
+I learned a lot about the costs/trade-offs of almost everything in deep space missions. Gravity assists introduce new complexities and constraints, even as they decrease the need for large delta-V budgets. The need for gravity assists restricts the paths we can take through space, and forces us to plot trajectories around entry/exit angles of these maneuvers.
+
+Relatedly, I learned about the need for precision in mission planning. My initial simulations (lacking correction maneuvers) showed me how small errors in the trajectory can snowball out of control over time. Reading the orbit reconstruction papers, and looking at the level of detail involved in the modelling, also helped me understand how important seemingly insignificant details like thruster imperfections were to mission planning and orbit determination.
+
+I also learned about mathematical formulations of physical problems, and how deceptively simple problems can have complex solutions. The Lambert problem is stated (in it's simplest form) as a boundary value problem (differential equation with constraints) that relates the acceleration of a body to it's direction relative to a central body, but solving it requires sophisticated algorithms and a lot of processing power.
 
 * Research
 ** Lambert
@@ -60,7 +63,7 @@ In the diagram above, the object enters with hyperbolic velocity $V_{\infinity}^
 $r_p$ denotes the point of closest approach (periapsis). The body follows a symmetric hyperbolic trajectory, so that the entry and exit asymptotes have related true anomalies \cite{assists_santos}.
 The angle of deflection is related to the true anomaly of the body when it exits the planet's SOI (\theta_a): $\frac{\psi}{2}=\theta_a - \frac{\pi}{2}$
 
-** Patched Conic Approximation
+** Patched Conic Approximation TODO
 The Patched Conic Approximation is a method for getting approximate solutions to gravity assist maneuvers and other three-body problems. It divides the problem into three separate two-body problems - the initial planetocentric orbit, a heliocentric transfer orbit, and another planetocentric orbit (around the target planet), and defines `patch conditions', such as conditions on its velocity as it leaves the SOI (Sphere of Influence) of the first planet. \cite{aoe_conics}
 
 Solving these problems usually involves defining 3 `patch points':
@@ -87,7 +90,7 @@ The velocity of the spacecraft relative to the sun is equal to the sum of the he
 
 \beta , the `exit angle', is related to the relative magnitudes of V, V_1 and V_c_1, as well as the angle \phi between V and V_c.
 
-** Voyager 2
+** Voyager 2 TODO
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
 Due to the gravity assists, Voyager 2 was able to maintain relatively high velocities, even while budgeting a total of about 190m/s of delta-V for maneuvers.
 
@@ -157,7 +160,7 @@ However, PyKep has limited ability to define constraints and specifications (suc
 Poliastro is a library for simulating and visualising orbital mechanics, sponsored by Google and the ESA.
 It provides facilities for plotting planets and other bodies over time, including propagating spacecraft orbits, as well as for automatically defining transfer orbits and maneuvers based on Lambert solvers.
 Ultimately, this was the one I settled on. It was the best-documented and easiest to work with, and also the only software under active development.
-** Understanding the Implementation
+** Notes on Poliastro Implementation
 In order to model the planned Voyager 3 mission, I used the python library Poliastro. It provides automated utilities for modelling and graphing orbits.
 Poliastro includes functions for automatically solving Lambert problems, and simulating gravity assists.
 *** Lambert
@@ -168,7 +171,7 @@ Poliastro also uses patched conics computations to achieve higher accuracy in gr
 
 Poliastro uses patched conic methods to calculate the delta-V gained from unpowered flybys, depending on input parameters like the hyperbolic insertion velocity, the radius of the flyby orbit, etc.
 
-*** Automatic Gravity Assists TODO
+*** Automatic Gravity Assists
 \cite{poliastro_jupiter} demonstrates a sample poliastro mission which performs a gravity assist around Earth to reach Jupiter, without us needing to explicitly program parameters for the assist. The mission is based on the New Horizons Juno probe.
 
 Poliastro's Lambert solver is `aware' of the gravitational influence of the planet, and automatically performs gravity assists. As a result, we need simply define the initial and target orbits for poliastrio to model a gravity assist.
@@ -394,7 +397,8 @@ Based on the results of this simulation, I wrote a script to simulate a similar 
 Since there weren't any ephemeris files I could rely on, I used an alternative method to define the initial orbit.
 * Problems/Errors
 ** Delta-V Mismatch
-When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data. (TODO: Datapoints).
+When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.
+
 The delta-V errors accumulated over time, but the mismatch was small enough that it could be caused by relatively minor inaccuracies in the simulation.
 
 The source of this problem was the lack of trajectory correction maneuvers, which led to the simulated trajectory diverging from the actual voyager 2 trajectory. In order to solve it, I introduced a routine to automatically perform trajectory correction maneuvers at the appropriate epoch, with the delta-V and duration defined based on orbit determination data for the original voyager.
@@ -413,8 +417,7 @@ Commented until I actually figure it out
 Voyager 2, and datapoints for delta-V mismatch.
 Patched conics, poliastro grav assists, introduction
 
-Voy 2 and intro
-Conics and poliastro
+Voy 2 and conics
 ** Grav assists
 ** Voy
 ** Practice:
