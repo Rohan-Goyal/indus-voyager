@@ -1,3 +1,19 @@
+#+OPTIONS: toc:nil
+#+begin_export latex
+\begin{titlepage}
+\begin{center}
+{\Large Internship Report \par}
+\vspace{2cm}
+{\Large Simulating the Voyager Mission \par}
+\vspace{2cm}
+Report prepared for Team Indus
+\vfill
+{\large Rohan Goyal \par}
+{\large Summer 2021}
+\end{center}
+\end{titlepage}
+  \tableofcontents \clearpage
+#+end_export
 * Introduction
 ** Task Description
 My overarching task was to design and simulate a `Voyager 3' mission, which would launch around 2024-2025 and visit as many of the outer planets as possible.
@@ -63,7 +79,8 @@ In the diagram above, the object enters with hyperbolic velocity $V_{\infinity}^
 $r_p$ denotes the point of closest approach (periapsis). The body follows a symmetric hyperbolic trajectory, so that the entry and exit asymptotes have related true anomalies \cite{assists_santos}.
 The angle of deflection is related to the true anomaly of the body when it exits the planet's SOI (\theta_a): $\frac{\psi}{2}=\theta_a - \frac{\pi}{2}$
 
-** Patched Conic Approximation TODO
+** Patched Conic Approximation
+# TODO
 The Patched Conic Approximation is a method for getting approximate solutions to gravity assist maneuvers and other three-body problems. It divides the problem into three separate two-body problems - the initial planetocentric orbit, a heliocentric transfer orbit, and another planetocentric orbit (around the target planet), and defines `patch conditions', such as conditions on its velocity as it leaves the SOI (Sphere of Influence) of the first planet. \cite{aoe_conics}
 
 Solving these problems usually involves defining 3 `patch points':
@@ -89,6 +106,18 @@ We know that $\Delta V = V_{\infinity}$, i.e. the velocity of the spacecraft rel
 The velocity of the spacecraft relative to the sun is equal to the sum of the heliocentric velocity of the planet and the velocity of the spacecraft relative to the planet. Mathematically, $V_1=V_{\infinity}+V_{c_1}$ \cite{ocw_17}
 
 \beta , the `exit angle', is related to the relative magnitudes of V, V_1 and V_c_1, as well as the angle \phi between V and V_c.
+
+Based on the exit velocity at infinity w.r.t planet 1, we can calculate the velocity at any other point in the orbit, enabling us to calculate the insertion velocity for planet 2.
+
+$$ \frac{V^2}{2}-\frac{\mu}{r}=\frac{V_{\infinity}^2}{2} $$
+Rearranging, $ V^2 = V_{\infinity}^2+\frac{2 \mu}{r} $
+
+We assume the orbit is inserted into orbit around the second planet from a parking orbit at radius $r_pk$.
+
+Applying the equation above and the cosine rule shows that the necessary delta-V is:
+
+$$\Delta V^2 = V_{pk}^2+V^2_c_{pk}-2V_{pk}V_c_{pk}cos(\phi_{pk})$$
+Where V_c_{pk}=\sqrt{\frac{\mu}{r_{pk}}}
 
 ** Voyager 2
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
