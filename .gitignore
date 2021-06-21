@@ -19,3 +19,12 @@ ltximg
 *.blg
 *.aux
 *.rtf
+
+.DS_Store
+*.desktop
+*.docx
+*.jpg
+
+notes.txt
+horizons_vel.txt
+horizons_results.txt
