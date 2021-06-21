@@ -61,21 +61,21 @@ Mathematically, we can model a gravity assist as a hyperbolic orbit, where we us
 A craft enters the planet's Sphere of Influence along an asymptotic arrival vector, and leaves along a `departure asymptote', with its orbit becoming a hyperbolic trajectory.
 
 We know $V^2 = \mu (\frac{2}{r} - \frac{1}{a})$, from the conservation equation.
-We can deduce the `hyperbolic excess velocity' of the body, i.e. the velocity of the body /relative to the planet/ as it exits the orbit, by having r \rightarrow \infinity.
-This yields $V_{\infinity}=\sqrt{-\frac{\mu}{a}}$
+We can deduce the `hyperbolic excess velocity' of the body, i.e. the velocity of the body /relative to the planet/ as it exits the orbit, by having r \rightarrow \infty.
+This yields $V_{\infty}=\sqrt{-\frac{\mu}{a}}$
 
-The exit velocity (relative to the Sun) of the spacecraft is thus $V_2=V_{\infinity}+V_p$, where V_p represents the velocity of the planet relative to the Sun.
+The exit velocity (relative to the Sun) of the spacecraft is thus $V_2=V_{\infty}+V_p$, where V_p represents the velocity of the planet relative to the Sun.
 
 If the angle of deflection between the entry and exit velocity vectors is $\psi$, then the delta-V of the spacecraft (including changes in direction) is \cite{assists_santos}:
 
-$$\Delta V = 2 V_{\infinity} sin(\frac{\psi}{2})$$
+$$\Delta V = 2 V_{\infty} sin(\frac{\psi}{2})$$
 
 We can see that in order to maximise the change in velocity of the flyby, we should maximise the angle of deflection $\psi$, and minimise the flyby radius $r_p$.
 
 #+DOWNLOADED: file:///home/rohan/d/indus-2/grav%20assist.png @ 2021-06-07 23:34:02
 [[file:Research/2021-06-07_23-34-02_grav assist.png]]
 
-In the diagram above, the object enters with hyperbolic velocity $V_{\infinity}^-$ along the arrival asymptote, and exits with velocity $V_{\infinity}^+$ along the departure asymptote.
+In the diagram above, the object enters with hyperbolic velocity $V_{\infty}^-$ along the arrival asymptote, and exits with velocity $V_{\infty}^+$ along the departure asymptote.
 $r_p$ denotes the point of closest approach (periapsis). The body follows a symmetric hyperbolic trajectory, so that the entry and exit asymptotes have related true anomalies \cite{assists_santos}.
 The angle of deflection is related to the true anomaly of the body when it exits the planet's SOI (\theta_a): $\frac{\psi}{2}=\theta_a - \frac{\pi}{2}$
 
@@ -101,23 +101,23 @@ $$\Delta V_1^2 = V_{c_2}^2+V_2^2-2V_{c_2}V_1cos(\phi_2)$$
 
 We can define some conditions on the body at the patch points.
 
-We know that $\Delta V = V_{\infinity}$, i.e. the velocity of the spacecraft relative to the planet is its excess hyperbolic velocity (which we already saw how to compute).
+We know that $\Delta V = V_{\infty}$, i.e. the velocity of the spacecraft relative to the planet is its excess hyperbolic velocity (which we already saw how to compute).
 
-The velocity of the spacecraft relative to the sun is equal to the sum of the heliocentric velocity of the planet and the velocity of the spacecraft relative to the planet. Mathematically, $V_1=V_{\infinity}+V_{c_1}$ \cite{ocw_17}
+The velocity of the spacecraft relative to the sun is equal to the sum of the heliocentric velocity of the planet and the velocity of the spacecraft relative to the planet. Mathematically, $V_1=V_{\infty}+V_{c_1}$ \cite{ocw_17}
 
 \beta , the `exit angle', is related to the relative magnitudes of V, V_1 and V_c_1, as well as the angle \phi between V and V_c.
 
 Based on the exit velocity at infinity w.r.t planet 1, we can calculate the velocity at any other point in the orbit, enabling us to calculate the insertion velocity for planet 2.
 
-$$ \frac{V^2}{2}-\frac{\mu}{r}=\frac{V_{\infinity}^2}{2} $$
-Rearranging, $ V^2 = V_{\infinity}^2+\frac{2 \mu}{r} $
+$$\frac{V^2}{2}-\frac{\mu}{r}=\frac{V_{\infty}^2}{2} $$
+Rearranging, $V^2 = V_{\infty}^2+\frac{2 \mu}{r}$
 
 We assume the orbit is inserted into orbit around the second planet from a parking orbit at radius $r_pk$.
 
 Applying the equation above and the cosine rule shows that the necessary delta-V is:
 
 $$\Delta V^2 = V_{pk}^2+V^2_c_{pk}-2V_{pk}V_c_{pk}cos(\phi_{pk})$$
-Where V_c_{pk}=\sqrt{\frac{\mu}{r_{pk}}}
+Where $V_c_{pk}=\sqrt{\frac{\mu}{r_{pk}}}$
 
 ** Voyager 2
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
@@ -471,4 +471,4 @@ Voy 2 and conics
 voyager 2, gravity assists and conics. In that order, roughly.
 * Bibliography
 \bibliographystyle{plain}
-\bibliography{full-bibliography}
+\bibliography{full-bibliographyG
