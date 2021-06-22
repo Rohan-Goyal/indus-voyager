@@ -318,3 +318,11 @@ So basically, define flyby, target.
 Successively propagate and update flyby,target.
 Finally, propagate the current orbit to the target_date.
 First, try this and see what happens. If it throws errors, then after the updates, include a lambert call to try to get back on course.
+* Poliastro Force Model
+- Basically propagates by solving Kepler's equation. However, it also has functions for perturbations, like third body perturbations and radiation pressure. So we can trust that the force model is mostly accurate, at least to an acceptable degree. The thing it might be missing is craft-specific forces, like imperfections with voyager's thrusters.
+  TODO: Poliastro has a spacecraft object. Try that?
+https://docs.poliastro.space/en/stable/autoapi/poliastro/core/perturbations/index.html
+https://docs.poliastro.space/en/stable/autoapi/poliastro/core/propagation/index.html
+
+TODO:
+- Spacecraft, export ephem.

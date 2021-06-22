@@ -18,6 +18,25 @@ def magnitude(obj):
     return (norm(obj.rv()[0]).to(u.AU), norm(obj.rv()[1]))
 
 
+def gen_ephem(orbit, start):
+    # Output RV vectors and epochs.
+    # One implementation is simply propagate to time + timedelta*i, output epoch and rv to a file.
+    # Another is more complex, but probably cheaper. Basically, start by taking the sample from a1 to a2.
+    # TODO: Picking A1 and A2. We want readings every few minutes, over a 24-hour period (I guess).
+    # We want every 10 minutes (say, meaning a total of 144 samples over 24 hours).
+    # I'm stupid. It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
+    init = orbit.propagate(start)
+    final = orbit.propagate(start + TimeDelta(1 * u.d))
+    data = orbit.sample(values=144, init.nu, final.nu)  # Every 10 minutes.
+    return data, data.differentials["s"]  # Position in km, vel in km/s
+
+
+def gen_ephem_backup(orbit, start, step=10 * 60 * u.s):
+    return [
+        (start + i * step, orbit.propagate(start + i * step).rv()) for i in range(144)
+    ]
+
+
 def tcm():
 
     t = Time
@@ -95,7 +114,11 @@ def assist_to_planet(planet, arrival, current, color, anom):
         label=f"To {planet}",
         color=color,
     )
-    return flyby_end, man.get_total_cost()
+    return (
+        flyby_end,
+        man.get_total_cost(),
+        gen_ephem(flyby, Time(arrival.iso.split()[0] + " 00:00")),
+    )
 
 
 # Removed returns of man.impulses and target
@@ -107,8 +130,8 @@ solar_system_ephemeris.set("jpl")
 launch_date = Time("1977-08-20 14:29", scale="utc").tdb
 jupiter_date = Time("1979-07-09 22:29", scale="utc").tdb
 saturn_date = Time("1981-08-25 03:24", scale="utc").tdb
-uranus_date = Time("1986-01-24", scale="utc").tdb
-neptune_date = Time("1989-08-25", scale="utc").tdb
+uranus_date = Time("1986-01-24 17:59", scale="utc").tdb
+neptune_date = Time("1989-08-25 03:56", scale="utc").tdb
 
 earth = Ephem.from_body(Earth, time_range(launch_date, end=saturn_date))
 
@@ -123,6 +146,7 @@ init_orbit = Orbit.from_classical(
     327.8026 * u.deg,
     11.65107 * u.deg,
     348.80709 * u.deg,
+    # epoch=launch_date
 )
 init_orbit_end = init_orbit.propagate(
     Time("1977-10-20 14:29", scale="utc").tdb
@@ -136,16 +160,16 @@ plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby"
 # I wonder if we can define a single maneuver that takes us on a path from Earth all the way to Saturn.
 # I imagine we could specify target orbits rather than simply target points based on ephemeris files,
 # but that doesn't work for the next mission.
-jupiter_end, jupiter_cost = assist_to_planet(
+jupiter_end, jupiter_cost, jupiter_ephem = assist_to_planet(
     Jupiter, jupiter_date, init_orbit_end, "black", (0, 150)
 )
-saturn_end, saturn_cost = assist_to_planet(
+saturn_end, saturn_cost, saturn_ephem = assist_to_planet(
     Saturn, saturn_date, jupiter_end, "blue", (30, 80)
 )
-uranus_end, uranus_cost = assist_to_planet(
+uranus_end, uranus_cost, uranus_ephem = assist_to_planet(
     Uranus, uranus_date, saturn_end, "red", (5, 70)
 )
-neptune_end, neptune_cost = assist_to_planet(
+neptune_end, neptune_cost, neptune_ephem = assist_to_planet(
     Neptune, neptune_date, uranus_end, "green", (40, 68)
 )
 
