@@ -22,12 +22,10 @@ def gen_ephem(orbit, start):
     # Output RV vectors and epochs.
     # One implementation is simply propagate to time + timedelta*i, output epoch and rv to a file.
     # Another is more complex, but probably cheaper. Basically, start by taking the sample from a1 to a2.
-    # TODO: Picking A1 and A2. We want readings every few minutes, over a 24-hour period (I guess).
-    # We want every 10 minutes (say, meaning a total of 144 samples over 24 hours).
     # I'm stupid. It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
     init = orbit.propagate(start)
     final = orbit.propagate(start + TimeDelta(1 * u.d))
-    data = orbit.sample(values=144, init.nu, final.nu)  # Every 10 minutes.
+    data = orbit.sample(values=10, min_anomaly=init.nu, max_anomaly=final.nu)
     return data, data.differentials["s"]  # Position in km, vel in km/s
 
 
@@ -103,7 +101,7 @@ def assist_to_planet(planet, arrival, current, color, anom):
     )
     ss = Orbit.from_ephem(Sun, planet_orbit, arrival)
     man = Maneuver.lambert(current, ss)
-    flyby, target = current.apply_maneuver(man, intermediate=True)
+    (flyby, _) = current.apply_maneuver(man, intermediate=True)
     for i in impulses(arrival, current):
         flyby.propagate(i[1])
         (flyby,) = flyby.apply_maneuver(i[0], intermediate=True)
@@ -140,26 +138,22 @@ ss_e0 = Orbit.from_ephem(Sun, earth, launch_date)
 ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
 init_orbit = Orbit.from_classical(
     Sun,
-    3.76054 * u.AU,
-    0.733305558 * u.one,
-    4.87003 * u.deg,
-    327.8026 * u.deg,
-    11.65107 * u.deg,
-    348.80709 * u.deg,
+    3.76054 * u.AU,  # Semimajor axis
+    0.733305558 * u.one,  # Ecc
+    4.87003 * u.deg,  # Inc
+    327.8026 * u.deg,  # Raan
+    11.65107 * u.deg,  # arg pericenter
+    348.80709 * u.deg,  # nu
     # epoch=launch_date
 )
+
+
 init_orbit_end = init_orbit.propagate(
     Time("1977-10-20 14:29", scale="utc").tdb
 )  # TODO: This bit is sticky.
 
 plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
 
-
-# NOTE: The basic problem seems to be the time.
-# To get a curved path, we need a surprising amount of time to get from Jupiter to Saturn.
-# I wonder if we can define a single maneuver that takes us on a path from Earth all the way to Saturn.
-# I imagine we could specify target orbits rather than simply target points based on ephemeris files,
-# but that doesn't work for the next mission.
 jupiter_end, jupiter_cost, jupiter_ephem = assist_to_planet(
     Jupiter, jupiter_date, init_orbit_end, "black", (0, 150)
 )

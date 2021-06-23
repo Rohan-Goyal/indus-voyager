@@ -471,4 +471,4 @@ Voy 2 and conics
 voyager 2, gravity assists and conics. In that order, roughly.
 * Bibliography
 \bibliographystyle{plain}
-\bibliography{full-bibliographyG
+\bibliography{full-bibliography}
