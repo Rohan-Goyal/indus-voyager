@@ -326,3 +326,35 @@ https://docs.poliastro.space/en/stable/autoapi/poliastro/core/propagation/index.
 
 TODO:
 - Spacecraft, export ephem.
+* Notes From Browsing the Source
+** Twobody/Propagation.py
+- Cowell integrates the twobody func, and then uses the result of that to find the position/velocity at various given time. Uses scipy.solve_ivp
+** Core/Propagation/Init.py
+- func_twobody is a part of Cowell's formulation. Returns vel vectors (unchanged from given) and an accel vector in same dir as radius I think but with different coefficients.
+
+Vallado's algorithm formulates the problem in terms of a universal variable $\chi$ and returns Lagrange Coefficients $f$ and $g$, and their derivatives $\dot{f}$ and $\dot{g}.
+We can use these to calculate the final $r$ and $v$ vectors as follows:
+$$\vec{r} &= f\vec{r_{o}} + g\vec{v_{o}} \\
+\vec{v} &= \dot{f}\vec{r_{o}} + \dot{g}\vec{v_{o}} $$
+
+Mikkola is based on orbital elements, and is somewhat similar to Farnocchia (at least in formulation of the problem). It calculates the eccentric anomaly at time $t$ using a Taylor series expansion, and uses that to find the true anomaly at $t$ and thus the $r$ and $v$ vectors.
+
+Danby is an iterative propagation model. Uses something called Aitken's delta method.
+
+We have an iteration generator $g(x_n)$, usually a straightforward step incrementer. We have a seq $y_n = x_n - \frac{(x_{n+1}-x_n)^2}{x_{n+2}-2x_{n+1}+x_n$, which converges faster than x_n but has the same limit.
+
+We model it as x=g(x)=M+esin(x), and seek a root using Aitken's delta.
+
+We assume a random x_n, and assume $x_n+\epsilon_n = a$ where a is the root of the equation. We can do a Taylor expansion around $a$, and express that in terms of x_n and \epsilon_n.
+
+Farnocchia props based on Keplerian elements, using a bunch of clever math to calculate the change in anomaly between start and end times, depending on the distance of the pericenter $q=\frac{p}{1+e}$, and on factors such as whether the orbit is elliptical, parabolic, or hyperbolic.
+
+TODO: Read paper for the default option (Farnocchia). Also read Danby, it's short and seems almost comprehensible.
+I read the papers, and these seem to be well-established and quite accurate methods.
+** Core/Perturbations.py
+- J2/J3 are included as a general function based on the oblateness of the attractor and its mass/radius. Yields acceleration caused by J2/3 perturbations as a vector. Included generally, so calculates perturbations for Jupiter, etc. automatically.
+- Third-body function takes params k (grav param of third body) and pos, a callable func which returns position of the third body over time.
+  Calcs using k*(unit vec of line from craft to third body)^3 - k*(unit vec of third body)^3. The equation itself is the same one used for. Disregards obliquity, and uses abstractions (grav parameter rather than mass distribution), so at best an approximation. Position and grav param are highly accurate (drawn from official datasets).
+https://link.springer.com/article/10.1007/s40295-015-0057-x (Third-body perturbations)
+https://arxiv.org/abs/0911.0149 Farnocchia (Poliastro's Kepler propagation algorithm)
+https://arxiv.org/pdf/1203.1770.pdf Third-body perturbations

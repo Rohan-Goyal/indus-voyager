@@ -25,7 +25,7 @@ def gen_ephem(orbit, start):
     # I'm stupid. It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
     init = orbit.propagate(start)
     final = orbit.propagate(start + TimeDelta(1 * u.d))
-    data = orbit.sample(values=10, min_anomaly=init.nu, max_anomaly=final.nu)
+    data = orbit.sample(values=24, min_anomaly=init.nu, max_anomaly=final.nu)
     return data, data.differentials["s"]  # Position in km, vel in km/s
 
 
