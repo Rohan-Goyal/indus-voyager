@@ -22,7 +22,7 @@ def gen_ephem(orbit, start):
     # Output RV vectors and epochs.
     # One implementation is simply propagate to time + timedelta*i, output epoch and rv to a file.
     # Another is more complex, but probably cheaper. Basically, start by taking the sample from a1 to a2.
-    # I'm stupid. It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
+    # It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
     init = orbit.propagate(start)
     final = orbit.propagate(start + TimeDelta(1 * u.d))
     data = orbit.sample(values=24, min_anomaly=init.nu, max_anomaly=final.nu)
@@ -146,7 +146,6 @@ init_orbit = Orbit.from_classical(
     348.80709 * u.deg,  # nu
     # epoch=launch_date
 )
-
 
 init_orbit_end = init_orbit.propagate(
     Time("1977-10-20 14:29", scale="utc").tdb

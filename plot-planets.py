@@ -3,7 +3,7 @@ from astropy.time import Time, TimeDelta
 from astropy.coordinates import solar_system_ephemeris
 
 solar_system_ephemeris.set("jpl")
-from poliastro.bodies import Sun, Earth, Jupiter, Saturn, Uranus, Neptune
+from poliastro.bodies import Sun, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
 from poliastro.plotting import StaticOrbitPlotter
 from poliastro.util import norm, time_range
 
@@ -30,6 +30,7 @@ def plot_planet(planet, duration, start=launch, plotter=plotter):
 
 def plot_all(start=launch, plotter=plotter):
     plot_planet(Earth, 0, start, plotter)
+    plot_planet(Mars, 1, start, plotter)
     plot_planet(Jupiter, 2, start, plotter)
     plot_planet(Saturn, 4, start, plotter)
     plot_planet(Uranus, 9.5, start, plotter)

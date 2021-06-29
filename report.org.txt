@@ -185,6 +185,8 @@ Thus, we see the exhaust /loses/ kinetic energy $\frac{1}{2}m_{ex}v_{ex}^2 + m_{
 
 With the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
 
+** COMMENT Geosynchronous Transfer Orbit
+# TODO (Optional)
 * Practice
 ** Experimentation
 In order to model this mission, I explored various python libraries.
@@ -384,6 +386,7 @@ These diverged significantly from the results of my script (which I've included 
 
 'Neptune: 22.613330589378773 km / s'
 #+end_src
+
 ** Correction Maneuvers from Ephemeris and Mission Reports
 Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in poliastro based on orbit determination papers \cite{icrf_jupiter} \cite{icrf_saturn} \cite{icrf_neptune}, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
 Since some of the data was lacking, I cross-referenced it with voyager ephemeris data from the JPL horizons system, which recorded the velocity vectors at different points in time. I wrote a python script to parse these ephemeris files, which could calculate the delta-V between various points in time and identify patterns which matched maneuvers (such as a short period of time with delta-V higher than average, or an impulsive maneuver which caused a large near-instantaneous change in velocity).
@@ -412,6 +415,18 @@ for i in impulses(arrival, current):
     flyby.propagate(i[1])
     (flyby,) = flyby.apply_maneuver(i[0], intermediate=True)
 #+end_src
+**** Ephemeris Generator
+#+begin_src python
+def gen_ephem(orbit, start):
+    # Output RV vectors and epochs.
+    # One implementation is simply propagate to time + timedelta*i, output epoch and rv to a file.
+    # Another is more complex, but probably cheaper. Basically, start by taking the sample from a1 to a2.
+    # It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
+    init = orbit.propagate(start)
+    final = orbit.propagate(start + TimeDelta(1 * u.d))
+    data = orbit.sample(values=24, min_anomaly=init.nu, max_anomaly=final.nu)
+    return data, data.differentials["s"]  # Position in km, vel in km/s
+#+end_src
 **** COMMENT Outputs
 #+begin_src
 [(<Quantity 1.01105114 AU>, <Quantity 38.97381359 km / s>),
@@ -429,7 +444,8 @@ for i in impulses(arrival, current):
 ** Plotting 2024 Mission
 Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets
 *** Defining Initial Orbit
-Since there weren't any ephemeris files I could rely on, I used an alternative method to define the initial orbit.
+Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit.
+TODO
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.
@@ -446,8 +462,6 @@ Poliastro defines a method ~get_total_cost~ which returns the total delta-V caus
 Since correctional maneuvers happened before gravity assists rather than in tandem, I was able to verify the delta-V costs of those, and check that they conformed to the delta-V budget of Voyager 2.
 ** COMMENT Timeline Mismatch
 - Really embarassing, honestly. Consider just not mentioning it.
-** COMMENT Initial Orbit
-Commented until I actually figure it out
 * COMMENT Gravity Assists, Voyager, Practice
 Voyager 2, and datapoints for delta-V mismatch.
 Patched conics, poliastro grav assists, introduction

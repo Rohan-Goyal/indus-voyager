@@ -358,3 +358,10 @@ I read the papers, and these seem to be well-established and quite accurate meth
 https://link.springer.com/article/10.1007/s40295-015-0057-x (Third-body perturbations)
 https://arxiv.org/abs/0911.0149 Farnocchia (Poliastro's Kepler propagation algorithm)
 https://arxiv.org/pdf/1203.1770.pdf Third-body perturbations
+** Geostationary Transfer Orbit
+Perigee earth+180km
+Apogee 42164
+Inclination 19.3
+Other stuff is whatever
+*** Defining in poliastro
+TODO: Get ecc and sma from periapsis/apopapsis distance.

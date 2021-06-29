@@ -32,3 +32,6 @@ horizons_results.txt
 tcm-list.txt
 updates.org.txt
 ds.txt
+
+*.bak
+__pycache__
