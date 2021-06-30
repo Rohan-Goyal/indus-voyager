@@ -191,7 +191,7 @@ In order to model this mission, I explored various python libraries.
 *** PyKep \cite{pykep}
 PyKep is a scientific library that allows us to model space exploration missions (such as multiple gravity assist maneuvers) as optimisation problems, and solve them using genetic algorithms and other optimisation techniques.
 However, PyKep has limited ability to define constraints and specifications (such as on the specific energy $C_3$ of the craft, and on how precisely we can define orbit timelines)
-*** Poliastro \cite{poliastro}
+*** Poliastro \cite{Poliastro}
 Poliastro is a library for simulating and visualising orbital mechanics, sponsored by Google and the ESA.
 It provides facilities for plotting planets and other bodies over time, including propagating spacecraft orbits, as well as for automatically defining transfer orbits and maneuvers based on Lambert solvers.
 Ultimately, this was the one I settled on. It was the best-documented and easiest to work with, and also the only software under active development.
@@ -202,12 +202,12 @@ Poliastro includes functions for automatically solving Lambert problems, and sim
 Central to Poliastro is the algorithm for solving Lambert's Problem, based on the solution in \cite{lambert_izzo}. In this implementation, it also calculates the delta-V necessary to achieve the required transfer orbit, and the initial and final velocity vectors.
 
 *** Patched Conics
-Poliastro also uses patched conics computations to achieve higher accuracy in gravity assists and other multi-planet maneuvers \cite{poliastro_conics}.
+Poliastro also uses patched conics computations to achieve higher accuracy in gravity assists and other multi-planet maneuvers \cite{Poliastro_conics}.
 
 Poliastro uses patched conic methods to calculate the delta-V gained from unpowered flybys, depending on input parameters like the hyperbolic insertion velocity, the radius of the flyby orbit, etc.
 
 *** Automatic Gravity Assists
-\cite{poliastro_jupiter} demonstrates a sample poliastro mission which performs a gravity assist around Earth to reach Jupiter, without us needing to explicitly program parameters for the assist. The mission is based on the New Horizons Juno probe.
+\cite{Poliastro_jupiter} demonstrates a sample Poliastro mission which performs a gravity assist around Earth to reach Jupiter, without us needing to explicitly program parameters for the assist. The mission is based on the New Horizons Juno probe.
 
 Poliastro's Lambert solver is `aware' of the gravitational influence of the planet, and automatically performs gravity assists. As a result, we need simply define the initial and target orbits for poliastrio to model a gravity assist.
 
@@ -256,7 +256,7 @@ def multiple(start=launch, inc=3, it=8):
 [[file:Practice/2021-06-07_12-46-00_planet positions 2024 launch.png]]
 ** Plotting 1977 Mission
 In order to come up with a template for the 2024 mission, I decided to first model the 1977 mission. This way I'd be able to check my simulation against existing data.
-The program was based on the example given in \cite{poliastro_jupiter}
+The program was based on the example given in \cite{Poliastro_jupiter}
 *** Overview of Program
 The program defines a generic ~assist_to_planet()~ function, which does the following. Calling this function with different planets and parameters (such as target dates) lets us simulate a deep-space mission with multiple gravity assists.
 1. Generate ephemeris of the target planet around launch/arrival times
@@ -340,7 +340,7 @@ pprint(f"Neptune: {neptune_cost}")
 ** Checking Against Voyager 2
 Due to some uncertainties I had about the results of my original simulation, I tried to verify them against known records for the voyager spacecraft.
 
-Poliastro also provides methods for querying ephemeris files (which record orbit information for missions such as voyager 2) and analysing them \cite{poliastro_ephem}. I wrote a script to query these ephemeris files for voyager 2, and retrieve the delta-V of the various burns and gravity assists.
+Poliastro also provides methods for querying ephemeris files (which record orbit information for missions such as voyager 2) and analysing them \cite{Poliastro_ephem}. I wrote a script to query these ephemeris files for voyager 2, and retrieve the delta-V of the various burns and gravity assists.
 
 The script essentially samples the velocity vectors at evenly-spaced points in time, and compares them. The function vsub returns the delta-V between two intervals, both as a vector and as a scalar (the magnitude of the delta-V vector).
 
@@ -386,7 +386,7 @@ These diverged significantly from the results of my script (which I've included 
 #+end_src
 
 ** Correction Maneuvers from Ephemeris and Mission Reports
-Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in poliastro based on orbit determination papers \cite{icrf_jupiter} \cite{icrf_saturn} \cite{icrf_neptune}, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
+Poliastro is incapable of automatically generating correctional maneuvers, which are necessary to ensure that the trajectory is maximally efficient. I implemented TCMs in Poliastro based on orbit determination papers \cite{icrf_jupiter} \cite{icrf_saturn} \cite{icrf_neptune}, which recorded the time and delta-V of Voyager 2's correctional maneuvers.
 Since some of the data was lacking, I cross-referenced it with voyager ephemeris data from the JPL horizons system, which recorded the velocity vectors at different points in time. I wrote a python script to parse these ephemeris files, which could calculate the delta-V between various points in time and identify patterns which matched maneuvers (such as a short period of time with delta-V higher than average, or an impulsive maneuver which caused a large near-instantaneous change in velocity).
 By selecting certain ranges of ephemeris files, I was able to find the delta-V of most of Voyager's TCMs.
 
@@ -443,7 +443,7 @@ def gen_ephem(orbit, start):
 Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets.
 *** Defining Initial Orbit
 Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit. Such an orbit has an apogee radius of about 42000km, and a perigee radius of about 6600km.
-I calculated the necessary Keplerian orbital elements (required to define an orbit in poliastro) as follows:
+I calculated the necessary Keplerian orbital elements (required to define an orbit in Poliastro) as follows:
 
 $a = \frac{r_{ap}+r_{per}}{2}=24582$
 
@@ -467,11 +467,11 @@ init_orbit= Orbit.from_classical(
 [[file:Practice/2021-06-29_17-18-31_ESA GTO.png]]
 *** Results
 Poliastro produced a slightly unusual plot for this mission: Rather than flying directly from Jupiter to Uranus, the solution it produced involved multiple revolutions, completing a full orbit around Jupiter before heading onward to Neptune by performing a gravity assist around Earth.
-#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/2024 partial.png @ 2021-06-29 17:20:50
-[[file:Practice/2021-06-29_17-20-50_2024 partial.png]]
 
-# TODO: Try a venus assist now or tomorrow.
-# TODO: Cite ESA, Planetary soc, stackexchange on GTO
+#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/2024-bodged-timelines.png @ 2021-06-30 09:58:15
+[[file:Practice/2021-06-30_09-58-15_2024-bodged-timelines.png]]
+
+# TODO: Cite ESA, Planetary soc
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.
@@ -486,11 +486,30 @@ Poliastro does not separate delta-V due to maneuvers from delta-V caused by flyb
 Poliastro defines a method ~get_total_cost~ which returns the total delta-V caused by the maneuver, including the delta-V gained by the slingshot. In order to cross-check the simulation with the voyager flight data, I relied on looking at instantaneous velocity at various critical points (just before, just after, and during flybys).
 
 Since correctional maneuvers happened before gravity assists rather than in tandem, I was able to verify the delta-V costs of those, and check that they conformed to the delta-V budget of Voyager 2.
+
+** COMMENT Unexpected Results
+Final simulation showed it was impossible to visit Neptune, meaning only Jupiter and Uranus were possible.
+It also gave an unexpected plot for the mission, showing a multi-revolution solution which involved completing nearly a full orbit around Jupiter, rather than going straight to Uranus.
+
+Despite this, the numbers Poliastro calculated for values such as the spacecrafts heliocentric velocity and delta-V were more or less in line with what I expected based on the voyager 2 data.
+
+*** Distance and Velocity (Heliocentric) Snapshots
+#+begin_src
+[(<Quantity 0.98327695 AU>, <Quantity 29.93678845 km / s>),
+ (<Quantity 5.3852182 AU>, <Quantity 5.77279585 km / s>),
+ (<Quantity 18.9796682 AU>, <Quantity 13.75296829 km / s>)]
+#+end_src
+
+*** Delta-V from Flybys
+#+begin_src
+'Jupiter: 27.123995291855735 km / s'
+'Uranus: 34.65363008982447 km / s'
+#+end_src
 ** COMMENT Timeline Mismatch
 - Really embarassing, honestly. Consider just not mentioning it.
 * COMMENT Gravity Assists, Voyager, Practice
 Voyager 2, and datapoints for delta-V mismatch.
-Patched conics, poliastro grav assists, introduction
+Patched conics, Poliastro grav assists, introduction
 
 Voy 2 and conics
 ** Grav assists

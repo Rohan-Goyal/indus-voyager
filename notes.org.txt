@@ -365,3 +365,24 @@ Inclination 19.3
 Other stuff is whatever
 *** Defining in poliastro
 TODO: Get ecc and sma from periapsis/apopapsis distance.
+** Notes
+
+<2021-06-30 Wed>
+- Discussed unexpected results for 2024 simulation
+- Suggested varying the dates, and seeing the results
+- Possibility: Insufficient delta-V for grav assist from Jupiter to Uranus.
+- There seems not to be a gravity assist - It seems to continue on its orbit around the sun.
+- Try GMAT: Get position of Jupiter WRT Earth during Voyager 2 mission. Find the time/date where Jupiter most closely matches that position, and use that as the base for planning the mission.
+- Voyager 2 mission planning docs, and their information on the Earth-Jupiter leg specifically.
+- Check altitude of closest approach for 2024.
+** Finding Jupiter conditions at Flyby
+(Note: We should consider doing Neptune wrt earth and jupiter next, if this works out)
+Find position and velocity during July 1979. Save that to python as two vectors
+Go through the 2024.txt file (using ephem-parser), convert each entry to an (epoch, pos, vel) tuple. Then, iter over tuples, find epoch where pos approximates 1977 july. Minimise norm(pos-pos_1977).
+
+For uranus, find uranus wrt jupiter during uranus flyby of voy 2. Then, mimic that for time range starting around 2034-ish.
+
+
+** Emacs mode for ephemeris txt files.
+
+Highlight
