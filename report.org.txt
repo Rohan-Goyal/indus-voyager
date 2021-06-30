@@ -116,8 +116,8 @@ We assume the orbit is inserted into orbit around the second planet from a parki
 
 Applying the equation above and the cosine rule shows that the necessary delta-V is:
 
-$$\Delta V^2 = V_{pk}^2+V^2_c_{pk}-2V_{pk}V_c_{pk}cos(\phi_{pk})$$
-Where $V_c_{pk}=\sqrt{\frac{\mu}{r_{pk}}}$
+$$\Delta V^2 = V_{pk}^2+V^2_{c_{pk}}-2V_{pk}V_{c_{pk}}cos(\phi_{pk})$$
+Where $V_{c_{pk}}=\sqrt{\frac{\mu}{r_{pk}}}$
 
 ** Voyager 2
 Voyager 2 launched in 1977, and used gravity assists to perform a `grand tour' of all 4 outer planets and eventually exit the solar system.
@@ -185,8 +185,6 @@ Thus, we see the exhaust /loses/ kinetic energy $\frac{1}{2}m_{ex}v_{ex}^2 + m_{
 
 With the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
 
-** COMMENT Geosynchronous Transfer Orbit
-# TODO (Optional)
 * Practice
 ** Experimentation
 In order to model this mission, I explored various python libraries.
@@ -442,10 +440,38 @@ def gen_ephem(orbit, start):
 'Neptune: 22.617026306586364 km / s'
 #+end_src
 ** Plotting 2024 Mission
-Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets
+Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets.
 *** Defining Initial Orbit
-Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit.
-TODO
+Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit. Such an orbit has an apogee radius of about 42000km, and a perigee radius of about 6600km.
+I calculated the necessary Keplerian orbital elements (required to define an orbit in poliastro) as follows:
+
+$a = \frac{r_{ap}+r_{per}}{2}=24582$
+
+$ecc= \frac{r_{ap} - r_{per}}{r_{ap} + r_{per}} =0.73033754$
+
+I used the sun as the center of the orbit using the ~change_attractor~ method in order to measure heliocentric rather than geocentric velocity.
+With this, the body left Earth's orbit with excess (heliocentric) hyperbolic velocity of about 38km/s - similar to what Voyager 2 started with.
+#+begin_src python
+init_orbit= Orbit.from_classical(
+    Earth,
+    24582*u.km, # Semi-major Axis
+    0.7303*u.one, # Eccentricity
+    19.3*u.deg, # Inclination
+    0*u.deg, # RAAN
+    0*u.deg, # Argument of Pericenter
+    0*u.deg, # True Anomaly
+    epoch=launch_date
+).change_attractor(Sun)
+#+end_src
+#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/ESA GTO.png @ 2021-06-29 17:18:31
+[[file:Practice/2021-06-29_17-18-31_ESA GTO.png]]
+*** Results
+Poliastro produced a slightly unusual plot for this mission: Rather than flying directly from Jupiter to Uranus, the solution it produced involved multiple revolutions, completing a full orbit around Jupiter before heading onward to Neptune by performing a gravity assist around Earth.
+#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/2024 partial.png @ 2021-06-29 17:20:50
+[[file:Practice/2021-06-29_17-20-50_2024 partial.png]]
+
+# TODO: Try a venus assist now or tomorrow.
+# TODO: Cite ESA, Planetary soc, stackexchange on GTO
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.

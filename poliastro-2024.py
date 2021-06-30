@@ -3,7 +3,7 @@ from pprint import pprint
 from astropy import units as u
 from astropy.coordinates import solar_system_ephemeris
 from astropy.time import Time, TimeDelta
-from poliastro.bodies import Mars, Earth, Jupiter, Neptune, Saturn, Sun, Uranus
+from poliastro.bodies import Venus, Earth, Jupiter, Neptune, Saturn, Sun, Uranus
 from poliastro.ephem import Ephem
 from poliastro.maneuver import Maneuver
 from poliastro.plotting import StaticOrbitPlotter
@@ -37,9 +37,9 @@ def assist_to_planet(planet, arrival, current, color, anom):
 
 
 launch_date = Time("2024-08-20 14:29", scale="utc").tdb
-jupiter_date = Time("2026-07-09 22:29", scale="utc").tdb
-uranus_date = Time("2033-01-24", scale="utc").tdb
-neptune_date = Time("2036-08-25", scale="utc").tdb
+jupiter_date = Time("2027-07-09 22:29", scale="utc").tdb
+uranus_date = Time("2033-07-24", scale="utc").tdb
+neptune_date = Time("2036-12-25", scale="utc").tdb
 
 earth = Ephem.from_body(Earth, time_range(launch_date, end=jupiter_date))
 C_3 = 102.4 * u.km ** 2 / u.s ** 2
@@ -54,19 +54,6 @@ init_orbit = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
 solar_system_ephemeris.set("jpl")
 # init_orbit=ss_e0.apply_maneuver(man)
 
-# init_orbit= Orbit.from_classical(
-#     Earth,
-#     24582*u.km, #SMA
-#     0.7303*u.one,
-#     160.7*u.deg, #Inc
-#     0*u.deg, # RAAN
-#     0*u.deg, # arg pericenter
-#     0*u.deg, # nu
-#     epoch=launch_date
-# ).change_attractor(Sun,force=True)
-# apogee= 42164
-# perigee=6571
-# ecc= r_ap - r_per / r_ap + r_per =0.73033754
 # https://astronomy.stackexchange.com/questions/4823/finding-the-radius-of-an-eccentric-orbit-at-any-point
 
 init_orbit_end = init_orbit.propagate(
@@ -79,7 +66,7 @@ jupiter_end, jupiter_cost = assist_to_planet(
     Jupiter, jupiter_date, init_orbit_end, "green", (-100,250)
 )
 uranus_end, uranus_cost = assist_to_planet(
-    Uranus, uranus_date, jupiter_end, "red", (-60, 160)
+    Uranus, uranus_date, jupiter_end, "red", (-60, 156)
 )
 # neptune_end, neptune_cost = assist_to_planet(
 #     Neptune, neptune_date, uranus_end, "green", (40, 68)
