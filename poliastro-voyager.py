@@ -95,7 +95,7 @@ def impulses(date, current, mans=tcm()):
     return [i for i in mans.values() if current.epoch < i[1] < date]
 
 
-def assist_to_planet(planet, arrival, current, color, anom):
+def assist_to_planet(planet, arrival, current, color):
     planet_orbit = Ephem.from_body(
         planet, time_range(launch_date, end=arrival + TimeDelta(1 * u.yr))
     )
@@ -108,7 +108,7 @@ def assist_to_planet(planet, arrival, current, color, anom):
     flyby_end = flyby.propagate(arrival + TimeDelta(0 * u.wk))
     plotter.plot_body_orbit(planet, arrival, label=f"{planet} End of Flyby")
     plotter.plot_trajectory(
-        flyby_end.sample(min_anomaly=anom[0] * u.deg, max_anomaly=anom[1] * u.deg),
+        flyby_end.sample(min_anomaly=flyby.nu, max_anomaly=flyby_end.nu),
         label=f"To {planet}",
         color=color,
     )
@@ -154,16 +154,16 @@ init_orbit_end = init_orbit.propagate(
 plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
 
 jupiter_end, jupiter_cost, jupiter_ephem = assist_to_planet(
-    Jupiter, jupiter_date, init_orbit_end, "black", (0, 150)
+    Jupiter, jupiter_date, init_orbit_end, "black"
 )
 saturn_end, saturn_cost, saturn_ephem = assist_to_planet(
-    Saturn, saturn_date, jupiter_end, "blue", (30, 80)
+    Saturn, saturn_date, jupiter_end, "blue"
 )
 uranus_end, uranus_cost, uranus_ephem = assist_to_planet(
-    Uranus, uranus_date, saturn_end, "red", (5, 70)
+    Uranus, uranus_date, saturn_end, "red"
 )
 neptune_end, neptune_cost, neptune_ephem = assist_to_planet(
-    Neptune, neptune_date, uranus_end, "green", (40, 68)
+    Neptune, neptune_date, uranus_end, "green"
 )
 
 vectors = [
