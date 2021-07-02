@@ -1,3 +1,7 @@
+import warnings
+
+warnings.filterwarnings("ignore")
+
 from pprint import pprint
 
 from astropy import units as u
@@ -10,8 +14,6 @@ from poliastro.plotting import StaticOrbitPlotter
 from poliastro.twobody import Orbit
 from poliastro.util import time_range, norm
 
-plotter = StaticOrbitPlotter()
-
 
 def magnitude(obj):
     return (norm(obj.rv()[0]).to(u.AU), norm(obj.rv()[1]))
@@ -19,14 +21,12 @@ def magnitude(obj):
 
 def assist_to_planet(planet, arrival, current, color):
     planet_orbit = Ephem.from_body(
-        planet, time_range(launch_date, end=arrival + TimeDelta(1 * u.yr))
+        planet, time_range(dates["launch"], end=arrival + TimeDelta(1 * u.yr))
     )
     ss = Orbit.from_ephem(Sun, planet_orbit, arrival)
     man = Maneuver.lambert(current, ss)
     (flyby, _) = current.apply_maneuver(man, intermediate=True)
-    print(flyby.nu)
     flyby_end = flyby.propagate(arrival + TimeDelta(0 * u.wk))
-    print(flyby_end.nu)
     plotter.plot_body_orbit(planet, arrival, label=f"{planet} Time of Flyby")
     plotter.plot_trajectory(
         flyby_end.sample(min_anomaly=flyby.nu, max_anomaly=flyby_end.nu),
@@ -39,46 +39,40 @@ def assist_to_planet(planet, arrival, current, color):
     )
 
 
-launch_date = Time("2024-08-20 14:29", scale="utc").tdb
-jupiter_date = Time("2027-07-09 22:29", scale="utc").tdb
-uranus_date = Time("2033-07-24", scale="utc").tdb
-neptune_date = Time("2036-12-25", scale="utc").tdb
-
-earth = Ephem.from_body(Earth, time_range(launch_date, end=jupiter_date))
-C_3 = 102.4 * u.km ** 2 / u.s ** 2
-# dv = C_3 ** 0.5 * v_e0 / norm(v_e0)
-# man = Maneuver.impulse(dv)
-
-# DONE: Initial launch stuff, and define initial orbit by applying a launch delta-V maneuver to the initial Earth orbit.
-ss_e0 = Orbit.from_ephem(Sun, earth, launch_date)
-ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
-init_orbit = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
-
 solar_system_ephemeris.set("jpl")
-# init_orbit=ss_e0.apply_maneuver(man)
+C_3 = 102.4 * u.km ** 2 / u.s ** 2
 
-# https://astronomy.stackexchange.com/questions/4823/finding-the-radius-of-an-eccentric-orbit-at-any-point
+dates = {
+    "launch": Time("2024-01-01", scale="utc").tdb,
+    "jupiter": Time("2026-01-01", scale="utc").tdb,
+    "uranus": Time("2033-01-01", scale="utc").tdb,
+    "neptune": Time("2036-01-01", scale="utc").tdb,
+}
+for i in range(20):
+    for k in dates.keys():
+        dates[k] = dates[k] + TimeDelta(12 * u.wk)
 
-init_orbit_end = init_orbit.propagate(Time("2024-12-20 14:29", scale="utc").tdb)
-plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
-plotter.plot_trajectory(
-    init_orbit.sample(min_anomaly=0 * u.deg, max_anomaly=180 * u.deg)
-)
+    plotter = StaticOrbitPlotter()
+    earth = Ephem.from_body(Earth, time_range(dates["launch"], end=dates["jupiter"]))
 
-jupiter_end, jupiter_cost = assist_to_planet(
-    Jupiter, jupiter_date, init_orbit_end, "green"
-)
-uranus_end, uranus_cost = assist_to_planet(Uranus, uranus_date, jupiter_end, "red")
-neptune_end, neptune_cost = assist_to_planet(Neptune, neptune_date, uranus_end, "green")
+    ss_e0 = Orbit.from_ephem(Sun, earth, dates["launch"])
+    ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
+    init = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
+    plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
 
-vectors = [
-    magnitude(init_orbit),
-    magnitude(jupiter_end),
-    magnitude(uranus_end),
-    magnitude(neptune_end),
-]
+    ends = {"init": init.propagate(Time("2024-12-20 14:29", scale="utc").tdb)}
+    costs = {}
 
-pprint(vectors)
-pprint(f"Jupiter: {jupiter_cost}")
-pprint(f"Uranus: {uranus_cost}")
-pprint(f"Neptune: {neptune_cost}")
+    ends["jupiter"], costs["jupiter"] = assist_to_planet(
+        Jupiter, dates["jupiter"], ends["init"], "red"
+    )
+    ends["uranus"], costs["uranus"] = assist_to_planet(
+        Uranus, dates["uranus"], ends["jupiter"], "green"
+    )
+    ends["neptune"], costs["neptune"] = assist_to_planet(
+        Neptune, dates["neptune"], ends["uranus"], "blue"
+    )
+
+for i in ("Jupiter", "Uranus", "Neptune"):
+    pprint(f"{i}: {costs[i.lower()]}")
+pprint([magnitude(i) for i in ends.values()])

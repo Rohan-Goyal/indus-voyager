@@ -168,7 +168,8 @@ voy2_ur= datapoint.from_lines("2446451.500000000 = A.D. 1986-Jan-21 00:00:00.000
                               "VX= 3.295603995565554E+01 VY= 1.347721156523741E+01 VZ= 3.656038905200099E-02"
                               )
 
-ds=from_file("/Users/rohangoyal/Downloads/uranus 2034.txt")
+ds_jup=from_file("/Users/rohangoyal/Downloads/jupiter 2024.txt")
+ds_ur=from_file("/Users/rohangoyal/Downloads/uranus 2034.txt")
 
-# In [1]: closest_rv(ds,voy2.r, voy2.v)
+# In [1]: closest_rv(ds,voy2_jup.r, voy2_jup.v)
 # Out[1]: ['2026-04-01T00:00:00', array([-2.01609233e+11,  7.31228899e+11,  4.87158347e+09]), array([-17026.5537969 ,  24154.0927399 ,    284.36336515])]

@@ -365,24 +365,44 @@ Inclination 19.3
 Other stuff is whatever
 *** Defining in poliastro
 TODO: Get ecc and sma from periapsis/apopapsis distance.
-** Notes
+* Notes
 
 <2021-06-30 Wed>
-- Discussed unexpected results for 2024 simulation
-- Suggested varying the dates, and seeing the results
+# - Discussed unexpected results for 2024 simulation
+# - Suggested varying the dates, and seeing the results (DONE: Similar plots)
 - Possibility: Insufficient delta-V for grav assist from Jupiter to Uranus.
 - There seems not to be a gravity assist - It seems to continue on its orbit around the sun.
-- Try GMAT: Get position of Jupiter WRT Earth during Voyager 2 mission. Find the time/date where Jupiter most closely matches that position, and use that as the base for planning the mission.
-- Voyager 2 mission planning docs, and their information on the Earth-Jupiter leg specifically.
-- Check altitude of closest approach for 2024.
-** Finding Jupiter conditions at Flyby
+# - DONE Try GMAT: Get position of Jupiter WRT Earth during Voyager 2 mission. Find the time/date where Jupiter most closely matches that position, and use that as the base for planning the mission. I tried this in the 2024-2034 range, closest was about 2026, and still a vast gap.
+- Voyager 2 mission planning docs, and their information on the Earth-Jupiter leg specifically. TODO
+# - Check altitude of closest approach for 2024.
+#   Method 1: Change attractor of the flyby_end orbit to jupiter. Take rv(), look at norm(r)
+#   Method 2: Jupiter.rv and flyby.rv heliocentric. Take the diff, and then norm of that.
+#   Do both, hope the results are roughly the same.
+
+** DONE Finding Jupiter conditions at Flyby
 (Note: We should consider doing Neptune wrt earth and jupiter next, if this works out)
 Find position and velocity during July 1979. Save that to python as two vectors
 Go through the 2024.txt file (using ephem-parser), convert each entry to an (epoch, pos, vel) tuple. Then, iter over tuples, find epoch where pos approximates 1977 july. Minimise norm(pos-pos_1977).
 
 For uranus, find uranus wrt jupiter during uranus flyby of voy 2. Then, mimic that for time range starting around 2034-ish.
 
+** Voyager 2: Info from Mission Planning Docs
 
-** Emacs mode for ephemeris txt files.
+** DONE Outlining rand variation of time
+Start on 2024-01-01, do it ~3 months at a time over about a 5 year range. So 20 funcalls.
 
-Highlight
+for i in range(20):
+for k in dates.keys():
+dates[k]=dates[k]+TimeDelta(12*u.wk
+
+** Message
+Hi Sharon,
+I wanted to update you on some of the things I've tried:
+- I compared modern ephemeris files to position data for Jupiter at the time of the voyager flyby (July 1979). Based on that, April 2026 is when Jupiter's position (relative to Earth) most closely matches its position in July 1979. However, even then the difference between position vectors is very large, so I doubt that can be having much effect.
+- I also tinkered with the plotting a bit, to make the program mark the points of orbit change more explicitly (the colours now change at exactly the point of the gravity assist/maneuver. This shows a gravity assist is happening at Jupiter, but not in the direction we would expect
+- Lastly, I tried programatically varying the launch time, and the times of arrival. The plots do change over time, but they have the same overall trajectory of looping back around Earth before moving on to Uranus. I've attached a pdf with a set of plots.
+I've also looked through the orbit reconstruction papers for the Jupiter mission, but I couldn't find anything useful or notable there.
+
+Given that a gravity assist is occurring in the simulation and that the numbers for timelines and delta-V are roughly in line with the original voyager mission, I think that this might be simply be the optimal trajectory for performing a gravity-assisted mission, given the current configuration of planets.
+I'm curious how likely you think that is - if you think it's mistaken, what might be the cause of this unusual plot?
+I'm using the same functions for this as I am for the Voyager 2 simulator, and that continues to produce accurate plots, both with and without the TCMs.

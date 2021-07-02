@@ -268,19 +268,24 @@ The program defines a generic ~assist_to_planet()~ function, which does the foll
 7. Plot that maneuver on a ~StaticOrbitPlotter~.
 *** ~Assist to planet~ function
 #+begin_src python
-def assist_to_planet(params):
-    planet_orbit = Ephem.from_body(planet, time_range(launch_date, end=next_date))
-    ss = Orbit.from_ephem(Sun, planet_orbit, target_date)
-    man = Maneuver.lambert(current_orbit, ss)
-    flyby, target = current_orbit.apply_maneuver(man, intermediate=True)
-    flyby_end = flyby.propagate(target_date + delta)
-    plotter.plot_body_orbit(planet, target_date, label=f"{planet} End of Flyby")
+def assist_to_planet(planet, arrival, current, color):
+    planet_orbit = Ephem.from_body(
+        planet, time_range(launch_date, end=arrival + TimeDelta(1 * u.yr))
+    )
+    ss = Orbit.from_ephem(Sun, planet_orbit, arrival)
+    man = Maneuver.lambert(current, ss)
+    (flyby, _) = current.apply_maneuver(man, intermediate=True)
+    flyby_end = flyby.propagate(arrival + TimeDelta(0 * u.wk))
+    plotter.plot_body_orbit(planet, arrival, label=f"{planet} Time of Flyby")
     plotter.plot_trajectory(
-        flyby_end.sample(min_anomaly=anom[0] * u.deg, max_anomaly=anom[1] * u.deg),
+        flyby_end.sample(min_anomaly=flyby.nu, max_anomaly=flyby_end.nu),
         label=f"To {planet}",
         color=color,
     )
-    return man.impulses, flyby_end, target, man.get_total_cost()
+    return (
+        flyby_end,
+        man.get_total_cost(),
+    )
 #+end_src
 *** Initial Orbit
 I started by defining the C_3 (characteristic energy in $m^2/s^2$) of the voyager 2 craft, and also the initial orbit of voyager 2.
@@ -472,6 +477,7 @@ Poliastro produced a slightly unusual plot for this mission: Rather than flying 
 [[file:Practice/2021-06-30_09-58-15_2024-bodged-timelines.png]]
 
 # TODO: Cite ESA, Planetary soc
+# https://astronomy.stackexchange.com/questions/4823/finding-the-radius-of-an-eccentric-orbit-at-any-point
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.
