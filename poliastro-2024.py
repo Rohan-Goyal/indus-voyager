@@ -48,30 +48,27 @@ dates = {
     "uranus": Time("2033-01-01", scale="utc").tdb,
     "neptune": Time("2036-01-01", scale="utc").tdb,
 }
-for i in range(20):
-    for k in dates.keys():
-        dates[k] = dates[k] + TimeDelta(12 * u.wk)
 
-    plotter = StaticOrbitPlotter()
-    earth = Ephem.from_body(Earth, time_range(dates["launch"], end=dates["jupiter"]))
+plotter = StaticOrbitPlotter()
+earth = Ephem.from_body(Earth, time_range(dates["launch"], end=dates["jupiter"]))
 
-    ss_e0 = Orbit.from_ephem(Sun, earth, dates["launch"])
-    ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
-    init = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
-    plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
+ss_e0 = Orbit.from_ephem(Sun, earth, dates["launch"])
+ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
 
-    ends = {"init": init.propagate(Time("2024-12-20 14:29", scale="utc").tdb)}
-    costs = {}
+init = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
+plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
+ends = {"init": init.propagate(Time("2024-12-20 14:29", scale="utc").tdb)}
+costs = {}
 
-    ends["jupiter"], costs["jupiter"] = assist_to_planet(
-        Jupiter, dates["jupiter"], ends["init"], "red"
-    )
-    ends["uranus"], costs["uranus"] = assist_to_planet(
-        Uranus, dates["uranus"], ends["jupiter"], "green"
-    )
-    ends["neptune"], costs["neptune"] = assist_to_planet(
-        Neptune, dates["neptune"], ends["uranus"], "blue"
-    )
+ends["jupiter"], costs["jupiter"] = assist_to_planet(
+    Jupiter, dates["jupiter"], ends["init"], "red"
+)
+ends["uranus"], costs["uranus"] = assist_to_planet(
+    Uranus, dates["uranus"], ends["jupiter"], "green"
+)
+ends["neptune"], costs["neptune"] = assist_to_planet(
+    Neptune, dates["neptune"], ends["uranus"], "blue"
+)
 
 for i in ("Jupiter", "Uranus", "Neptune"):
     pprint(f"{i}: {costs[i.lower()]}")
