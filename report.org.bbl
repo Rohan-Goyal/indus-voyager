@@ -1,22 +1,29 @@
 \begin{thebibliography}{10}
 
-\bibitem{poliastro_ephem}
+\bibitem{Poliastro_ephem}
 Ephem module — poliastro 0.14.0 documentation.
 \newblock \url{https://docs.poliastro.space/en/v0.14.0/api/safe/ephem.html}.
 \newblock (Accessed on 06/07/2021).
 
-\bibitem{poliastro_jupiter}
+\bibitem{Poliastro_jupiter}
 Going to jupiter with python using jupyter and poliastro — poliastro 0.15.0
   documentation.
 \newblock
   \url{https://docs.poliastro.space/en/stable/examples/Going%20to%20Jupiter%20with%20Python%20using%20Jupyter%20and%20poliastro.html}.
 \newblock (Accessed on 06/07/2021).
 
-\bibitem{poliastro_conics}
+\bibitem{Poliastro_conics}
 Patched conics computations · poliastro/poliastro wiki.
 \newblock
   \url{https://github.com/poliastro/poliastro/wiki/Patched-conics-computations}.
 \newblock (Accessed on 06/07/2021).
+
+\bibitem{ESAGeost}
+Esa - geostationary transfer orbit.
+\newblock
+  \url{https://www.esa.int/ESA_Multimedia/Images/2020/03/Geostationary_transfer_orbit},
+  February 2020.
+\newblock (Accessed on 07/02/2021).
 
 \bibitem{lambert_simple}
 Giulio Avanzini.
@@ -28,6 +35,11 @@ Giulio Avanzini.
 Philip~Rodriguez Blanco and Carl~E. Mungan.
 \newblock Rocket propulsion, classical relativity, and the oberth effect.
 \newblock {\em The Physics Teacher}, 57(7):439--441, 2019.
+
+\bibitem{backgrounder1980}
+Frank Bristow.
+\newblock Voyager backgrounder.
+\newblock Technical report, NASA, 10 1980.
 
 \bibitem{backgrounder1981}
 Frank Bristow.
@@ -42,6 +54,15 @@ J.~Campbell, S.~Synnott, and G.~Bierman.
 \bibitem{velocity_dist}
 Wikimedia Commons.
 \newblock Voyager 2 velocity vs distance from sun, 2020.
+
+\bibitem{planetary_soc_gto}
+Jason Davis.
+\newblock How to get a satellite to geostationary orbit | the planetary
+  society.
+\newblock
+  \url{https://www.planetary.org/articles/20140116-how-to-get-a-satellite-to-gto},
+  January 2014.
+\newblock (Accessed on 07/02/2021).
 
 \bibitem{ocw_17}
 John Deyst and Edward Greitzer.
@@ -83,7 +104,7 @@ Robert Jacobson.
 Frederick~H. Lutze.
 \newblock Lecture notes: Summary of patched conic approximations, 2009.
 
-\bibitem{poliastro}
+\bibitem{poliastro_software}
 Juan Luis~Cano Rodríguez, Jorge~Martínez Garrido, Antonio Hidalgo, Shreyas
   Bapat, Nikita Astrakhantsev, Eleftheria Chatziargyriou, María~Eugenia Cruz,
   Dani, Abhishek Chaurasia, Yash-10, Alberto~Lorenzo Márquez, Dhruv Sondhi,
@@ -91,7 +112,7 @@ Juan Luis~Cano Rodríguez, Jorge~Martínez Garrido, Antonio Hidalgo, Shreyas
   Robles, Greg Lindahl, andrea carballo, Andrej Rode, Helge Eichhorn, Himanshu
   Garg, Hrishikesh Goyal, Ian DesJardin, aOrionis, AntoniiaK, Josvth, Priyanshu
   Rohilla, Angala, Ole Streicher, and Rafael~Araujo Lehmkuhl.
-\newblock {poliastro/poliastro: poliastro 0.15.0 (Earth edition)}, May 2021.
+\newblock poliastro/poliastro: poliastro 0.15.0 (earth edition), May 2021.
 
 \bibitem{assists_santos}
 Ignacio Santos.

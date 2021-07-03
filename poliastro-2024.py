@@ -43,10 +43,10 @@ solar_system_ephemeris.set("jpl")
 C_3 = 102.4 * u.km ** 2 / u.s ** 2
 
 dates = {
-    "launch": Time("2024-01-01", scale="utc").tdb,
-    "jupiter": Time("2026-01-01", scale="utc").tdb,
-    "uranus": Time("2033-01-01", scale="utc").tdb,
-    "neptune": Time("2036-01-01", scale="utc").tdb,
+    "launch": Time("2026-01-01", scale="utc").tdb,
+    "jupiter": Time("2028-01-01", scale="utc").tdb,
+    "uranus": Time("2035-01-01", scale="utc").tdb,
+    "neptune": Time("2038-01-01", scale="utc").tdb,
 }
 
 plotter = StaticOrbitPlotter()
@@ -54,9 +54,9 @@ earth = Ephem.from_body(Earth, time_range(dates["launch"], end=dates["jupiter"])
 
 ss_e0 = Orbit.from_ephem(Sun, earth, dates["launch"])
 ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
-
 init = Orbit.synchronous(Earth).change_attractor(Sun, force=True)
 plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
+
 ends = {"init": init.propagate(Time("2024-12-20 14:29", scale="utc").tdb)}
 costs = {}
 

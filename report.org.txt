@@ -1,4 +1,7 @@
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil title:nil author:nil
+#+LANGUAGE: en
+#+AUTHOR: Rohan Goyal
+#+TITLE: Internship Report: Simulating the Voyager Mission
 #+begin_export latex
 \begin{titlepage}
 \begin{center}
@@ -14,6 +17,9 @@ Report prepared for Team Indus
 \end{titlepage}
   \tableofcontents \clearpage
 #+end_export
+#+LATEX_HEADER: \usepackage[none]{hyphenat}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{setspace}
 * Introduction
 ** Task Description
 My overarching task was to design and simulate a `Voyager 3' mission, which would launch around 2024-2025 and visit as many of the outer planets as possible.
@@ -27,7 +33,7 @@ Based on this, I ended up doing additional research into the specific design of 
 
 With this done, I wrote some scripts to plot the planets over time, to get an idea of feasible mission plans for 2024. I learned that Saturn was out of alignment with the other outer planets, and so Voyager 3 would only be able to visit Jupiter, Uranus, and Neptune.
 ** What I Learned
-I learned a lot about the costs/trade-offs of almost everything in deep space missions. Gravity assists introduce new complexities and constraints, even as they decrease the need for large delta-V budgets. The need for gravity assists restricts the paths we can take through space, and forces us to plot trajectories around entry/exit angles of these maneuvers.
+I learned a lot about the costs/trade-offs of almost everything in deep space missions. Gravity assists introduce new complexities and constraints, even as they decrease the need for large delta-V budgets. The need for gravity assists restricts the paths an object can take through space, and forces us to plot trajectories around entry/exit angles of these maneuvers.
 
 Relatedly, I learned about the need for precision in mission planning. My initial simulations (lacking correction maneuvers) showed me how small errors in the trajectory can snowball out of control over time. Reading the orbit reconstruction papers, and looking at the level of detail involved in the modelling, also helped me understand how important seemingly insignificant details like thruster imperfections were to mission planning and orbit determination.
 
@@ -70,7 +76,7 @@ If the angle of deflection between the entry and exit velocity vectors is $\psi$
 
 $$\Delta V = 2 V_{\infty} sin(\frac{\psi}{2})$$
 
-We can see that in order to maximise the change in velocity of the flyby, we should maximise the angle of deflection $\psi$, and minimise the flyby radius $r_p$.
+In order to maximise the change in velocity of the flyby, we should maximise the angle of deflection $\psi$, and minimise the flyby radius $r_p$.
 
 #+DOWNLOADED: file:///home/rohan/d/indus-2/grav%20assist.png @ 2021-06-07 23:34:02
 [[file:Research/2021-06-07_23-34-02_grav assist.png]]
@@ -80,7 +86,6 @@ $r_p$ denotes the point of closest approach (periapsis). The body follows a symm
 The angle of deflection is related to the true anomaly of the body when it exits the planet's SOI (\theta_a): $\frac{\psi}{2}=\theta_a - \frac{\pi}{2}$
 
 ** Patched Conic Approximation
-# TODO
 The Patched Conic Approximation is a method for getting approximate solutions to gravity assist maneuvers and other three-body problems. It divides the problem into three separate two-body problems - the initial planetocentric orbit, a heliocentric transfer orbit, and another planetocentric orbit (around the target planet), and defines `patch conditions', such as conditions on its velocity as it leaves the SOI (Sphere of Influence) of the first planet. \cite{aoe_conics}
 
 Solving these problems usually involves defining 3 `patch points':
@@ -89,7 +94,7 @@ Solving these problems usually involves defining 3 `patch points':
 2. Conditions arriving at the target planet
 3. Conditions on leaving the target planet.
 
-First, we define vector quantities
+First, define vector quantities:
 - $V_c$: Velocity of planet w.r.t Sun
 - $V$: Heliocentric orbit velocity of the craft
 - $\Delta V$: Difference between $V_c$ and $V$
@@ -139,12 +144,12 @@ We can see that the gravity assists provided most of the delta-V for Voyager 2 b
 Voyager 2 took advantage of a rare planetary alignment (which occurs every 175 years) to go on a `Grand Tour' of the solar system, and visit all four outer planets, while Voyager 1 only visited Jupiter and Saturn before exiting the solar system. The reliance on gravity assists allowed this trajectory to be feasible, given constraints on delta-V, thrust, etc.
 Voyager 2 provided the first flyby of Uranus and Neptune, and gathered exceptional data on things like the moons of Saturn and Jupiter.
 *** Tracking and Attitude/Orientation
-Voyager receives constantly transmitting waves from Earth, changes their frequency by a fixed ratio, and transmits it back to Earth. The craft's velocity can be measured from the change in frequency of waves received on Earth due to the doppler effect. \cite{backgrounder_1980}
+Voyager receives constantly transmitting waves from Earth, changes their frequency by a fixed ratio, and transmits it back to Earth. The craft's velocity can be measured from the change in frequency of waves received on Earth due to the doppler effect. \cite{backgrounder1980}
 
-Voyager's distance from Earth can be measured by transmitting a digital code to Voyager and measuring the total time elapsed until it is returned. However, doing this accurately requires a sense of Voyager's velocity. \cite{backgrounder_1980}
+Voyager's distance from Earth can be measured by transmitting a digital code to Voyager and measuring the total time elapsed until it is returned. However, doing this accurately requires a sense of Voyager's velocity. \cite{backgrounder1980}
 
 
-Celestial Reference: Electro-optical sensors view the Sun and the star Canopus. Data from these are fed to the automatic attitude/orientation adjustment system, allowing Voyager to automatically adjust its orientation around the three axes. \cite{backgrounder_1980}
+Celestial Reference: Electro-optical sensors view the Sun and the star Canopus. Data from these are fed to the automatic attitude/orientation adjustment system, allowing Voyager to automatically adjust its orientation around the three axes. \cite{backgrounder1980}
 
 ** Correctional Maneuvers
 Trajectory Correction Maneuvers (TCMs) are performed before or after flybys, to correct for minor distortions caused by imperfect navigation, uncertainty in craft position/velocity, etc. Since these errors compound over time, periodic TCMs ensure the spacecraft stays on its intended trajectory. TCMs are usually on the order of magnitude of m/s, and most of the large maneuvers are in the form of unpowered gravity assists.
@@ -178,20 +183,21 @@ We can imagine this as a rocket-powered skateboard travelling along a U-shaped v
 If the rocket fires a burn at the trough B, while moving with velocity v_B, then:
 
 The energy of the rocket is $E_r = \frac{1}{2}M(v_B+\Delta v)^2 - Mgh_B = \frac{1}{2}M(\Delta v)^2 + Mv_B \Delta v + \frac{1}{2}Mv_B^2-Mgh_B$
+
 Thus, we see the rocket gains kinetic energy $\frac{1}{2}M(\Delta v)^2 + Mv_B \Delta v$ due to the burn.
 
 The energy of the exhaust is $E_{ex} = \frac{1}{2}m_{ex}(v_b-v_{ex})^2-m_{ex}gh_b = \frac{1}{2}m_{ex}v_{ex}^2 - m_{ex}v_B + \frac{1}{2}m_{ex}v_B^2 - m_{ex}gh_B$
+
 Thus, we see the exhaust /loses/ kinetic energy $\frac{1}{2}m_{ex}v_{ex}^2 + m_{ex}v_B$, meaning the total energy of the system remains constant.
 
 With the Oberth effect, a burn fired at periapsis has a similar effect - by firing the burn at a relatively high velocity, the rocket benefits from both the mechanical and chemical energy of the fuel, and thus is able to reach a higher final velocity.
 
 * Practice
 ** Experimentation
-In order to model this mission, I explored various python libraries.
 *** PyKep \cite{pykep}
 PyKep is a scientific library that allows us to model space exploration missions (such as multiple gravity assist maneuvers) as optimisation problems, and solve them using genetic algorithms and other optimisation techniques.
 However, PyKep has limited ability to define constraints and specifications (such as on the specific energy $C_3$ of the craft, and on how precisely we can define orbit timelines)
-*** Poliastro \cite{Poliastro}
+*** Poliastro \cite{poliastro_software}
 Poliastro is a library for simulating and visualising orbital mechanics, sponsored by Google and the ESA.
 It provides facilities for plotting planets and other bodies over time, including propagating spacecraft orbits, as well as for automatically defining transfer orbits and maneuvers based on Lambert solvers.
 Ultimately, this was the one I settled on. It was the best-documented and easiest to work with, and also the only software under active development.
@@ -421,10 +427,7 @@ for i in impulses(arrival, current):
 **** Ephemeris Generator
 #+begin_src python
 def gen_ephem(orbit, start):
-    # Output RV vectors and epochs.
-    # One implementation is simply propagate to time + timedelta*i, output epoch and rv to a file.
-    # Another is more complex, but probably cheaper. Basically, start by taking the sample from a1 to a2.
-    # It's quite simple: Find anom at 00:00 on date, and find anom at 23:59 on date. Then sample
+    # Output RV vectors over time
     init = orbit.propagate(start)
     final = orbit.propagate(start + TimeDelta(1 * u.d))
     data = orbit.sample(values=24, min_anomaly=init.nu, max_anomaly=final.nu)
@@ -447,12 +450,12 @@ def gen_ephem(orbit, start):
 ** Plotting 2024 Mission
 Based on the results of this simulation, I wrote a script to simulate a similar mission which launched in 2024. The script uses similar functions, but it only visits a few planets.
 *** Defining Initial Orbit
-Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit. Such an orbit has an apogee radius of about 42000km, and a perigee radius of about 6600km.
+Since there weren't any ephemeris files I could rely on, I defined the initial orbit to be a Geosynchronous Transfer Orbit. Such an orbit has an apogee radius of about 42000km, and a perigee radius of about 6600km \cite{planetary_soc_gto}.
 I calculated the necessary Keplerian orbital elements (required to define an orbit in Poliastro) as follows:
 
-$a = \frac{r_{ap}+r_{per}}{2}=24582$
+$$a = \frac{r_{ap}+r_{per}}{2}=24582$$
 
-$ecc= \frac{r_{ap} - r_{per}}{r_{ap} + r_{per}} =0.73033754$
+$$ecc= \frac{r_{ap} - r_{per}}{r_{ap} + r_{per}} =0.73033754$$
 
 I used the sun as the center of the orbit using the ~change_attractor~ method in order to measure heliocentric rather than geocentric velocity.
 With this, the body left Earth's orbit with excess (heliocentric) hyperbolic velocity of about 38km/s - similar to what Voyager 2 started with.
@@ -470,14 +473,31 @@ init_orbit= Orbit.from_classical(
 #+end_src
 #+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/ESA GTO.png @ 2021-06-29 17:18:31
 [[file:Practice/2021-06-29_17-18-31_ESA GTO.png]]
+\cite{ESAGeost}
 *** Results
-Poliastro produced a slightly unusual plot for this mission: Rather than flying directly from Jupiter to Uranus, the solution it produced involved multiple revolutions, completing a full orbit around Jupiter before heading onward to Neptune by performing a gravity assist around Earth.
+Poliastro produced a slightly unusual plot for this mission: Rather than flying directly from Jupiter to Uranus, the solution it produced involved multiple revolutions. It traveled to Jupiter, and performed a gravity assist there that caused it to return to (and swing by past) Earth on its way to Uranus, only to return to Earth and swing around to Neptune.
 
-#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/2024-bodged-timelines.png @ 2021-06-30 09:58:15
-[[file:Practice/2021-06-30_09-58-15_2024-bodged-timelines.png]]
+#+DOWNLOADED: file:/Users/rohangoyal/OneDrive/School/indus-2/voyager-2024-proper.png @ 2021-07-02 09:56:31
+[[file:Practice/2021-07-02_09-56-31_voyager-2024-proper.png]]
 
-# TODO: Cite ESA, Planetary soc
-# https://astronomy.stackexchange.com/questions/4823/finding-the-radius-of-an-eccentric-orbit-at-any-point
+As a sanity check, I compared the data from this simulation to the (verified and accurate) data from the Voyager-2 simulation.
+#+begin_src
+// Total velocity change due to gravity assist (2024):
+'Jupiter: 25.12748186373011 km / s'
+'Uranus: 28.14334237600722 km / s'
+
+// Total velocity change due to gravity assist (Voyager-2):
+'Jupiter: 19.224017096185012 km / s'
+'Saturn: 24.662460566215962 km / s'
+'Uranus: 29.270080992361287 km / s'
+'Neptune: 22.622330767345026 km / s'
+#+end_src
+
+We can see that although the numbers are different, they are within the same range of around 20-30km/s delta-V, indicating that these results are reasonable rather than outlandish. Additionally, we can see that the values for Uranus are higher than for Jupiter, in line with the Voyager 2 data (and with our intuitions, since the `deflection' at Uranus is visibly larger.
+
+Additionally, we can see that the trajectory, despite its unusual shape, matches the timelines we prescribed. Thus, given that the delta-V figures and timelines are in line with expectations, I've concluded that this trajectory is a viable one for a future voyager-3 mission.
+
+
 * Problems/Errors
 ** Delta-V Mismatch
 When comparing the results from the ephemeris to my simulation, I noticed an odd error. Although the rv (radius and velocity) vectors output by the simulation roughly matched the ephemeris, the delta-V due to gravity assists did not match existing data.
@@ -493,6 +513,66 @@ Poliastro defines a method ~get_total_cost~ which returns the total delta-V caus
 
 Since correctional maneuvers happened before gravity assists rather than in tandem, I was able to verify the delta-V costs of those, and check that they conformed to the delta-V budget of Voyager 2.
 
+** Verifying the 2024 Solution
+Since this plot was unexpected, to say the least, I decided to perform some tests to see if it was genuinely the optimal solution, or the result of irregularities in my design.
+
+I experimented with varying the launch epoch over a large time range to see what effect that had on results.
+*** Programatically Varying the Launch Time
+I wanted to see if this was the result of an unusual choice of launch epoch. To test this, I coded a feature to consistently vary all the launch/arrival dates, in 3-month increments over a 5-year period from 2024 to 2029. This produced a wide range of plots, but they all shared the common feature of looping around Earth after performing their gravity assists.
+#+begin_src python
+  dates = {"launch": Time("2024-01-01", scale="utc").tdb,
+           "jupiter": Time("2026-01-01", scale="utc").tdb,
+           "uranus": Time("2033-01-01", scale="utc").tdb,
+           "neptune": Time("2036-01-01", scale="utc").tdb,}
+
+  for i in range(20):
+      for k in dates.keys():
+          dates[k] = dates[k] + TimeDelta(12 * u.wk)
+      # Main code went here
+#+end_src
+*** Comparing to Ephemeris Files
+I also wrote a script that compared the positions of Jupiter and Uranus (relative to the Earth) from 2024 onward to their positions at the time of the Voyager 2 flyby. I noticed that the time which was most similar to the times of flyby were April 2026 for Jupiter, and December 2043 for Uranus. However, even then the position vectors were very different from the position vectors at the time of the original flyby. Based on this, I concluded that the planetary alignment (or lack thereof) was different enough from 1977 that a very different solution was to be expected.
+
+#+begin_src python
+  def closest_r(data, const): #
+      Find epoch/rv of object which is closest to the position vector const
+      diffs=[vdiff(const, i.r) for i in data]
+      idx=diffs.index(min(diffs))
+      return data[idx]
+
+  voy2_jup=datapoint.from_lines("2443325.500000000 = A.D. 1977-Jul-01 00:00:00.0000 TDB",
+                                "X = 1.551783168059400E+08 Y = 8.877133948602245E+08 Z =-7.056679235727489E+06",
+                                "VX=-4.175487351667007E+01 VY=-1.028913798527010E+00 VZ= 2.726943920685317E-01"
+                                )
+
+
+  voy2_ur= datapoint.from_lines("2446451.500000000 = A.D. 1986-Jan-21 00:00:00.0000 TDB",
+                                "X =-4.754062367113435E+08 Y =-2.933414590935786E+09 Z =-3.268767410831213E+06",
+                                "VX= 3.295603995565554E+01 VY= 1.347721156523741E+01 VZ= 3.656038905200099E-02"
+                                )
+
+  ds_jup=from_file("/Users/rohangoyal/Downloads/jupiter 2024.txt")
+  ds_ur=from_file("/Users/rohangoyal/Downloads/uranus 2034.txt")
+#+end_src
+
+*Outputs:*
+
+#+begin_src
+# NOTE: The array represents the position vector of the planet in kilometers.
+
+In [1]: voy2_jup
+Out[1]: ['1977-07-01T00:00:00', array([ 1.55178317e+11,  8.87713395e+11, -7.05667924e+09])]
+
+In [2]: closest_r(ds_jup,voy2_jup.r)
+Out[2]: ['2026-04-01T00:00:00', array([-2.01609233e+11,  7.31228899e+11,  4.87158347e+09])]
+
+In [3]: voy2_ur
+Out[3]: ['1986-01-21T00:00:00', array([-4.75406237e+11, -2.93341459e+12, -3.26876741e+09])]
+
+In [4]: closest_r(ds_ur,voy2_ur.r)
+Out[4]: ['2043-12-01T00:00:00', array([-2.12049235e+12,  1.68400804e+12,  3.35241341e+10])]
+#+end_src
+*** COMMENT Reviewing Voyager 2 Mission Planning Docs (Optional - I didn't get anything)
 ** COMMENT Unexpected Results
 Final simulation showed it was impossible to visit Neptune, meaning only Jupiter and Uranus were possible.
 It also gave an unexpected plot for the mission, showing a multi-revolution solution which involved completing nearly a full orbit around Jupiter, rather than going straight to Uranus.
@@ -512,28 +592,13 @@ Despite this, the numbers Poliastro calculated for values such as the spacecraft
 'Uranus: 34.65363008982447 km / s'
 #+end_src
 ** COMMENT Timeline Mismatch
-- Really embarassing, honestly. Consider just not mentioning it.
+- Really embarassing, honestly. Consider just not mentioning it
+* TODO Conclusion Optional
 * COMMENT Gravity Assists, Voyager, Practice
-Voyager 2, and datapoints for delta-V mismatch.
-Patched conics, Poliastro grav assists, introduction
-
-Voy 2 and conics
-** Grav assists
-** Voy
-** Practice:
-# - PyKep experiments
-- Timeline problems
-- Errors with parameters
-- Excess fuel cons/delta-V
-# Features - generic function for flyby, specifies c3 parameter and init orbit, outputs impulses (vectors and magnitudes), and velocities at points.
-# NOTE : Missing propagate commands after the flybys. Is that an issue? Doing the assist at the wrong moment? No idea.
-** Additional research
 - research on voy maneuvers and elta-v ({planet} orbit.pdf)
 - stone{date}.pdf
 - voyager backgrounder, mission description
-
-
-voyager 2, gravity assists and conics. In that order, roughly.
+- TODO: File attachments for source files and time variations.pdf
 * Bibliography
 \bibliographystyle{plain}
 \bibliography{full-bibliography}

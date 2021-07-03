@@ -125,7 +125,6 @@ def assist_to_planet(planet, arrival, current, color):
 # For now, simulate the voyager 2 mission. Have the dates set accordingly for flybys of Jupiter, Saturn. Uranus and Neptune.
 solar_system_ephemeris.set("jpl")
 
-dates={launch:}
 launch_date = Time("1977-08-20 14:29", scale="utc").tdb
 jupiter_date = Time("1979-07-09 22:29", scale="utc").tdb
 saturn_date = Time("1981-08-25 03:24", scale="utc").tdb
