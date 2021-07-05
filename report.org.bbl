@@ -18,13 +18,6 @@ Patched conics computations · poliastro/poliastro wiki.
   \url{https://github.com/poliastro/poliastro/wiki/Patched-conics-computations}.
 \newblock (Accessed on 06/07/2021).
 
-\bibitem{ESAGeost}
-Esa - geostationary transfer orbit.
-\newblock
-  \url{https://www.esa.int/ESA_Multimedia/Images/2020/03/Geostationary_transfer_orbit},
-  February 2020.
-\newblock (Accessed on 07/02/2021).
-
 \bibitem{lambert_simple}
 Giulio Avanzini.
 \newblock A simple lambert algorithm.

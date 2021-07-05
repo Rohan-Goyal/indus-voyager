@@ -37,9 +37,9 @@ def plot_all(start=launch, plotter=plotter):
     plot_planet(Neptune, 13, start, plotter)
 
 
-def multiple(start=launch, inc=3, it=8):
+def multiple(start=launch, inc=2, it=8):
     for i in range(0, it):
-        start += months(inc)
+        start += years(inc)
         plot_all(start, StaticOrbitPlotter())
 
 

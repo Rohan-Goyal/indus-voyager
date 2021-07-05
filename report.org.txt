@@ -591,14 +591,20 @@ Despite this, the numbers Poliastro calculated for values such as the spacecraft
 'Jupiter: 27.123995291855735 km / s'
 'Uranus: 34.65363008982447 km / s'
 #+end_src
-** COMMENT Timeline Mismatch
-- Really embarassing, honestly. Consider just not mentioning it
-* TODO Conclusion Optional
+* COMMENT TODO Conclusion
 * COMMENT Gravity Assists, Voyager, Practice
 - research on voy maneuvers and elta-v ({planet} orbit.pdf)
 - stone{date}.pdf
 - voyager backgrounder, mission description
-- TODO: File attachments for source files and time variations.pdf
+* Appendix: List of Relevant Files
+- ~2026-mission.py~: The source file for simulating the 2026 Voyager 3 mission, and producing data/plots
+- ~voy-2026-plot.png~: Plot of the calculated 2026 Voyager 3 trajectory, produced by the ~2026-mission.py~ script
+- ~time-variations.pdf~: Contains various plots of hypothetical Voyager 3 missions, starting at different launch times.
+- ~voyager-2.py~: Simulation of the original voyager mission
+- ~voy-2-plot.png~: Plot of voyager 2 trajectory, produced by ~voyager-2.py~ script
+- ~plot-planets.py~: Produces a plot of each planet at the position it is expected to be in when Voyager 3 flies by it (assumes 2024 launch, so approximate at best)
+- ~planet-positions.png~: Plot produced by ~plot-planets.py~
+- ~ephem-parser.py~: A set of tools for automatically processing ephemeris files, which list positions and/or velocities of bodies over time in a specified format
 * Bibliography
 \bibliographystyle{plain}
 \bibliography{full-bibliography}

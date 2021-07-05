@@ -406,3 +406,16 @@ I've also looked through the orbit reconstruction papers for the Jupiter mission
 Given that a gravity assist is occurring in the simulation and that the numbers for timelines and delta-V are roughly in line with the original voyager mission, I think that this might be simply be the optimal trajectory for performing a gravity-assisted mission, given the current configuration of planets.
 I'm curious how likely you think that is - if you think it's mistaken, what might be the cause of this unusual plot?
 I'm using the same functions for this as I am for the Voyager 2 simulator, and that continues to produce accurate plots, both with and without the TCMs.
+
+** <2021-07-05 Mon>
+# - Gravity assist occurs at Jupiter, but still goes the long way round.
+# - Most likely an issue with planetary alignment/choice of epoch.
+- Experiment with reversing jupiter orbit. TODO:
+- Experiment with 2024 launch, only visit jupiter and uranus. Pretty much the same plot
+- Find a year with better alignments. (Uranus/neptune ahead of jupiter). TODO
+- Try with 2030/38. Consider phasing angles between planet, and run a few simulations. 2038 looks ridiculous, 2030 is vaguely sane. TODO: Try saturn with 2030
+- Params: RAAN, Inclination, AOP. Some combination thereof.
+
+** Reverse orbit direction
+- Change start month, so earth position is different.
+- Reverse dir of geosync orbit. So find elems of geosync orbit at apt. epoch, and define a new orbit with that but reversed. See if that does anything.
