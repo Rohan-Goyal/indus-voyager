@@ -2,6 +2,7 @@ import warnings
 
 
 from pprint import pprint
+from collections import OrderedDict as od
 
 from astropy import units as u
 from astropy.coordinates import solar_system_ephemeris
@@ -63,7 +64,8 @@ def loop():  # Iterate over possible launch times, view angle between jupiter an
 
 def assist_to_planet(planet, arrival, current, color):
     planet_orbit = Ephem.from_body(
-        planet, time_range(dates["launch"], end=arrival + TimeDelta(1 * u.yr))
+        planet,
+        time_range(arrival - TimeDelta(1 * u.yr), end=arrival + TimeDelta(1 * u.yr)),
     )
     ss = Orbit.from_ephem(Sun, planet_orbit, arrival)
     man = Maneuver.lambert(current, ss)
@@ -81,38 +83,59 @@ def assist_to_planet(planet, arrival, current, color):
     )
 
 
+def run_mission(launch, planets):
+    dates = od(
+        {
+            Earth: launchdate,
+            Jupiter: launchdate + TimeDelta(2 * u.yr),
+            Saturn: launchdate + TimeDelta(4 * u.yr),
+            Uranus: launchdate + TimeDelta(9.5 * u.yr),
+            Neptune: launchdate + TimeDelta(12 * u.yr),
+        }
+    )
+
+    earth = Ephem.from_body(
+        Earth, time_range(dates[Earth], end=dates[Earth] + TimeDelta(1 * u.yr))
+    )
+    ss_e = Orbit.from_ephem(Sun, earth, dates[Earth])
+    init = Orbit.synchronous(Earth, epoch=dates[Earth]).change_attractor(
+        Sun, force=True
+    )
+    plotter.plot_body_orbit(Earth, ss_e.epoch, label=f"{Earth} at end of flyby")
+
+    ends = od({Earth: init.propagate(init.epoch + 12 * u.wk)})
+    costs = od()
+
+    for i in planets:
+        ends[i], costs[i] = assist_to_planet(
+            i, dates[i], list(ends.values())[-1], colors[i]
+        )
+
+    # ends["jupiter"], costs["jupiter"] = assist_to_planet(
+    #     Jupiter, dates["jupiter"], ends["init"], "red"
+    # )
+
+    # ends["saturn"], costs["saturn"] = assist_to_planet(
+    #     Saturn, dates["saturn"], ends["init"], "red"
+    # )
+
+    # ends["uranus"], costs["uranus"] = assist_to_planet(
+    #     Uranus, dates["uranus"], ends["saturn"], "green"
+    # )
+    # ends["neptune"], costs["neptune"] = assist_to_planet(
+    #     Neptune, dates["neptune"], ends["uranus"], "blue"
+    # )
+
+    pprint([f"{i}: {v}" for i, v in costs.items()])
+    pprint([f"{i}:{magnitude(v)}" for i, v in ends.items()])
+
+
+plotter = StaticOrbitPlotter()
 warnings.filterwarnings("ignore")
 solar_system_ephemeris.set("jpl")
 C_3 = 102.4 * u.km ** 2 / u.s ** 2
+colors = {Jupiter: "red", Saturn: "yellow", Uranus: "green", Neptune: "blue"}
 
-launchdate = Time("2029-04-01", scale="utc").tdb
-dates = {
-    "launch": launchdate,
-    "jupiter": launchdate + TimeDelta(2 * u.yr),
-    "uranus": launchdate + TimeDelta(9.5 * u.yr),
-    "neptune": launchdate + TimeDelta(12 * u.yr),
-}
 
-plotter = StaticOrbitPlotter()
-earth = Ephem.from_body(Earth, time_range(dates["launch"], end=dates["jupiter"]))
-
-ss_e0 = Orbit.from_ephem(Sun, earth, dates["launch"])
-ss_e0_end = ss_e0.propagate_to_anomaly(180.0 * u.deg)
-init = Orbit.synchronous(Earth, epoch=dates["launch"]).change_attractor(Sun, force=True)
-plotter.plot_body_orbit(Earth, ss_e0_end.epoch, label=f"{Earth} at end of flyby")
-
-ends = {"init": init.propagate(Time("2026-12-20 14:29", scale="utc").tdb)}
-costs = {}
-
-ends["jupiter"], costs["jupiter"] = assist_to_planet(
-    Jupiter, dates["jupiter"], ends["init"], "red"
-)
-ends["uranus"], costs["uranus"] = assist_to_planet(
-    Uranus, dates["uranus"], ends["jupiter"], "green"
-)
-# ends["neptune"], costs["neptune"] = assist_to_planet(
-#     Neptune, dates["neptune"], ends["uranus"], "blue"
-# )
-
-pprint([f"{i.capitalize()}: {v} \n" for i, v in costs.items()])
-pprint([f"{i.capitalize()}:{magnitude(v)}" for i, v in ends.items()])
+launchdate = Time("2037-04-01", scale="utc").tdb
+run_mission(launchdate, [Jupiter, Uranus])
