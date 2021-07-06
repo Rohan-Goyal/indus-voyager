@@ -52,14 +52,12 @@ def jup_phase(launch):
     return angle(Jupiter, Uranus, launch + 2 * u.yr, launch + 9.5 * u.yr)
 
 
-def loop():  # Iterate over possible launch times, view angle between jupiter and uranus
+def loop():
+    # Iterate over possible launch times, view angle between jupiter and uranus
     launch = Time("2024-01-01")
     for i in range(0, 20):
         l = launch + TimeDelta(i * u.yr)
         print(l, jup_phase(l))
-
-
-# NOTE: Launch between 2028 and 2033 produces values <55
 
 
 def assist_to_planet(planet, arrival, current, color):
@@ -111,22 +109,7 @@ def run_mission(launch, planets):
             i, dates[i], list(ends.values())[-1], colors[i]
         )
 
-    # ends["jupiter"], costs["jupiter"] = assist_to_planet(
-    #     Jupiter, dates["jupiter"], ends["init"], "red"
-    # )
-
-    # ends["saturn"], costs["saturn"] = assist_to_planet(
-    #     Saturn, dates["saturn"], ends["init"], "red"
-    # )
-
-    # ends["uranus"], costs["uranus"] = assist_to_planet(
-    #     Uranus, dates["uranus"], ends["saturn"], "green"
-    # )
-    # ends["neptune"], costs["neptune"] = assist_to_planet(
-    #     Neptune, dates["neptune"], ends["uranus"], "blue"
-    # )
-
-    pprint([f"{i}: {v}" for i, v in costs.items()])
+    pprint(costs)
     pprint([f"{i}:{magnitude(v)}" for i, v in ends.items()])
 
 
