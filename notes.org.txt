@@ -419,3 +419,31 @@ I'm using the same functions for this as I am for the Voyager 2 simulator, and t
 ** Reverse orbit direction
 - Change start month, so earth position is different.
 - Reverse dir of geosync orbit. So find elems of geosync orbit at apt. epoch, and define a new orbit with that but reversed. See if that does anything.
+* Trajectory samples
+
+launchdate = Time("2037-04-01", scale="utc").tdb
+run_mission(launchdate, [Jupiter, Uranus])
+
+OrderedDict([(Jupiter (♃), <Quantity 26.48372548 km / s>),
+             (Uranus (⛢), <Quantity 19.04508459 km / s>)])
+['Earth (♁):(<Quantity 0.83278872 AU>, <Quantity 32.95439608 km / s>)',
+ 'Jupiter (♃):(<Quantity 5.36520618 AU>, <Quantity 8.86637 km / s>)',
+ 'Uranus (⛢):(<Quantity 18.32641162 AU>, <Quantity 4.7060157 km / s>)']
+
+
+launchdate = Time("2030-04-01", scale="utc").tdb
+run_mission(launchdate, [Saturn, Uranus])
+
+OrderedDict([(Saturn (♄), <Quantity 21.40313459 km / s>),
+             (Uranus (⛢), <Quantity 15.64565391 km / s>)])
+['Earth (♁):(<Quantity 0.83475772 AU>, <Quantity 32.89821287 km / s>)',
+ 'Saturn (♄):(<Quantity 9.03771884 AU>, <Quantity 6.15086829 km / s>)',
+ 'Uranus (⛢):(<Quantity 18.59945636 AU>, <Quantity 6.30082048 km / s>)']
+* <2021-07-05 Mon>
+# - Gravity assist occurs at Jupiter, but still goes the long way round.
+# - Most likely an issue with planetary alignment/choice of epoch.
+- Experiment with reversing jupiter orbit. TODO: Couldn't figure it out so far.
+# - Experiment with 2024 launch, only visit jupiter and uranus. Pretty much the same plot.
+# - Find a year with better alignments. (Uranus/neptune ahead of jupiter). TODO.
+# - Try with 2030/38. Consider phasing angles between planet, and run a few simulations. 2038 looks ridiculous, 2030 is vaguely sane. TODO: Try saturn with 2030
+-

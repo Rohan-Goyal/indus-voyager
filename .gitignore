@@ -10,6 +10,7 @@ TCM_Stuff
 *.log
 *.ipynb
 fast-compile
+!poliastro-2024.ipynb
 
 *.bib
 !full-bibliography.bib
@@ -36,5 +37,3 @@ ds.txt
 *.bak
 __pycache__
 relevant symlinks
-
-

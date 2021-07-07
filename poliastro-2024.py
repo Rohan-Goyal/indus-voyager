@@ -7,13 +7,13 @@ from collections import OrderedDict as od
 from astropy import units as u
 from astropy.coordinates import solar_system_ephemeris
 from astropy.time import Time, TimeDelta
-from poliastro.bodies import Venus, Earth, Jupiter, Neptune, Saturn, Sun, Uranus
+from poliastro.bodies import Sun, Earth, Saturn, Jupiter, Neptune, Uranus
 from poliastro.ephem import Ephem
 from poliastro.maneuver import Maneuver
 from poliastro.plotting import StaticOrbitPlotter
 from poliastro.twobody import Orbit
 from poliastro.util import time_range, norm
-from numpy import arccos, pi
+from numpy import arccos
 
 
 def magnitude(obj):
@@ -84,11 +84,11 @@ def assist_to_planet(planet, arrival, current, color):
 def run_mission(launch, planets):
     dates = od(
         {
-            Earth: launchdate,
-            Jupiter: launchdate + TimeDelta(2 * u.yr),
-            Saturn: launchdate + TimeDelta(4 * u.yr),
-            Uranus: launchdate + TimeDelta(9.5 * u.yr),
-            Neptune: launchdate + TimeDelta(12 * u.yr),
+            Earth: launch,
+            Jupiter: launch + TimeDelta(2 * u.yr),
+            Saturn: launch + TimeDelta(4 * u.yr),
+            Uranus: launch + TimeDelta(9.5 * u.yr),
+            Neptune: launch + TimeDelta(12 * u.yr),
         }
     )
 
@@ -106,19 +106,15 @@ def run_mission(launch, planets):
 
     for i in planets:
         ends[i], costs[i] = assist_to_planet(
-            i, dates[i], list(ends.values())[-1], colors[i]
+            i, dates[i], list(ends.values())[-1], f"C{len(ends)}"
         )
 
     pprint(costs)
     pprint([f"{i}:{magnitude(v)}" for i, v in ends.items()])
 
 
-plotter = StaticOrbitPlotter()
-warnings.filterwarnings("ignore")
 solar_system_ephemeris.set("jpl")
-C_3 = 102.4 * u.km ** 2 / u.s ** 2
-colors = {Jupiter: "red", Saturn: "yellow", Uranus: "green", Neptune: "blue"}
-
-
-launchdate = Time("2037-04-01", scale="utc").tdb
-run_mission(launchdate, [Jupiter, Uranus])
+warnings.filterwarnings("ignore")
+plotter = StaticOrbitPlotter()
+launchdate = Time("2030-04-01", scale="utc").tdb
+run_mission(launchdate, [Saturn, Uranus])
