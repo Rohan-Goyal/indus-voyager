@@ -352,8 +352,8 @@ Farnocchia props based on Keplerian elements, using a bunch of clever math to ca
 TODO: Read paper for the default option (Farnocchia). Also read Danby, it's short and seems almost comprehensible.
 I read the papers, and these seem to be well-established and quite accurate methods.
 ** Core/Perturbations.py
-- J2/J3 are included as a general function based on the oblateness of the attractor and its mass/radius. Yields acceleration caused by J2/3 perturbations as a vector. Included generally, so calculates perturbations for Jupiter, etc. automatically.
-- Third-body function takes params k (grav param of third body) and pos, a callable func which returns position of the third body over time.
+- J2/J3 are included as general functions, calculated based on the oblateness of the attractor and its mass/radius. It yields acceleration caused by J2/3 perturbations as a vector. Included generally, so calculates perturbations for Jupiter, etc. automatically.
+- Third-body function takes parameters ~k~ (grav param of third body) and ~pos~, a function describing the position of the third body as a function of time, and calculates the acceleration vector using the standard third-body perturbation equation. However, it disregards factors such as obliquity
   Calcs using k*(unit vec of line from craft to third body)^3 - k*(unit vec of third body)^3. The equation itself is the same one used for. Disregards obliquity, and uses abstractions (grav parameter rather than mass distribution), so at best an approximation. Position and grav param are highly accurate (drawn from official datasets).
 https://link.springer.com/article/10.1007/s40295-015-0057-x (Third-body perturbations)
 https://arxiv.org/abs/0911.0149 Farnocchia (Poliastro's Kepler propagation algorithm)
@@ -439,11 +439,24 @@ OrderedDict([(Saturn (♄), <Quantity 21.40313459 km / s>),
 ['Earth (♁):(<Quantity 0.83475772 AU>, <Quantity 32.89821287 km / s>)',
  'Saturn (♄):(<Quantity 9.03771884 AU>, <Quantity 6.15086829 km / s>)',
  'Uranus (⛢):(<Quantity 18.59945636 AU>, <Quantity 6.30082048 km / s>)']
+
 * <2021-07-05 Mon>
-# - Gravity assist occurs at Jupiter, but still goes the long way round.
-# - Most likely an issue with planetary alignment/choice of epoch.
-- Experiment with reversing jupiter orbit. TODO: Couldn't figure it out so far.
-# - Experiment with 2024 launch, only visit jupiter and uranus. Pretty much the same plot.
-# - Find a year with better alignments. (Uranus/neptune ahead of jupiter). TODO.
-# - Try with 2030/38. Consider phasing angles between planet, and run a few simulations. 2038 looks ridiculous, 2030 is vaguely sane. TODO: Try saturn with 2030
--
+- Gravity assist occurs at Jupiter, but still goes the long way round.
+- Most likely an issue with planetary alignment/choice of epoch.
+- Experiment with reversing jupiter orbit, by varying RAAN/inc
+- Experiment with 2024 launch, only visit jupiter and uranus.
+- Find a year with better alignments. (Uranus/neptune ahead of jupiter).
+- Try with 2030/38. Consider phasing angles between planet, and run a few simulations.
+
+* <2021-07-07 Wed>
+- Unable to reverse orbit direction in Poliastro (as far as I can tell)
+- By changing epoch and target planets, able to find a suitable trajectory (visiting Saturn and Uranus in 2030 produced good results)
+- TCMs were used to account for uncertainty in gravitational parameters, and for orientation/velocity changes due to scientific investigations by voyager. Thus, TCMs for this mission can be modelled at a later stage, and can be ignored for now.
+- Magnetic torquers/attitude control thrusters can be used to control orientation of the spacecraft, and craft without these use generic thrusters to change orientation/attitude.
+- Variety of open questions remain, such as constraints the 2026 orbit would create for missions, and its potential unpredictability.
+# Launch etc.
+Keep this - reversing orbit - as an open question. TODO: Other open questions. I'm sure there are plenty.
+
+For weird orbit - not sure about constraints this unusual trajectory would create for missions/data-collection. Not sure if its predictable. These are open questions. For instance, perturbations from Earth/etc. may complicate orbits and require TCMs, adding delta-V expenses.
+Second orbit is more normal, so we can focus on that going forward. Pick one of 2030/37.
+Some craft have cool orientation-correctors that involve building up torque.
